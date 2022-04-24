@@ -1,28 +1,31 @@
 <template>
-  <div class="demo-page__swiper-box">
-    <z-swiper
-        v-if="list.length"
-        auto-play
-        :list="list"
-        :visible-length="4"
-        :inner-height="110"
-        :inner-width="540"
-        :side-gap="18"
-        :span-gap="32">
+  <div class="demo-page">
+    <div class="demo-page__swiper-box">
+      <z-swiper
+          v-if="list.length"
+          auto-play
+          :list="list"
+          :visible-length="4"
+          inner-height="55px"
+          inner-width="270px"
+          side-gap="16px"
+          span-gap="16px">
 
-      <img
-          slot="left"
-          src="./assets/images/icon-triangle-left.png">
+        <template #left>
+          <img src="./assets/images/icon-triangle-left.png">
+        </template>
 
-      <img
-          slot-scope="{ item }"
-          :src="item"
-          class="demo-page__item"/>
+        <template #default="{ item }">
+          <img :src="item"
+               class="demo-page__item"/>
+        </template>
 
-      <img
-          slot="right"
-          src="./assets/images/icon-triangle-right.png">
-    </z-swiper>
+        <template #right>
+          <img src="./assets/images/icon-triangle-right.png">
+        </template>
+
+      </z-swiper>
+    </div>
   </div>
 </template>
 
@@ -67,6 +70,12 @@ export default {
 </script>
 
 <style>
+html, body {
+  padding: 0;
+  margin: 0;
+  background: darkslategrey;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -81,45 +90,28 @@ export default {
 @import './assets/styles/common';
 
 .demo-page {
-  @include relative-center();
-
-  &__text {
-    margin-top: 48px;
-    margin-left: 32px;
-  }
-
-  &__data {
-    @include flex-center();
-    height: 76px;
-    margin-top: 8px;
-    font-weight: 500;
-    font-size: 44px;
-
-    & > span {
-      color: #5AE1FF;
-      font-size: 52px;
-    }
-  }
+  @include flex-center();
 
   &__swiper-box {
-    margin-top: 20px;
-    min-height: 110px;
+    margin-top: 10px;
+    min-height: 55px;
   }
 
   &__item {
+    box-sizing: border-box;
     border: 2px solid #FFFFFF;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 8px;
   }
 
   &__desc {
-    margin-top: 28px;
-    font-size: 26px;
+    margin-top: 14px;
+    font-size: 13px;
     color: #FFFFFF;
     text-align: center;
-    line-height: 40px;
+    line-height: 20px;
   }
 }
 </style>

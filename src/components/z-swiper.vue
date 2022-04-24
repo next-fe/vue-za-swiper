@@ -9,17 +9,17 @@
 
     <div class="z-swiper__list-wrapper"
          ref="swiperBody"
-         :style="{
-                width: innerWidth,
-                height: innerHeight
-             }"
          @touchstart="touchstart"
          @touchmove="touchmove"
          @touchend="touchend"
          @touchcancel="touchcancel">
       <div class="z-swiper__list"
            ref="swiperWrapper"
-           style="transform: translateX(0px)">
+           :style="{
+               width: innerWidth,
+               height: innerHeight,
+               transform: 'translateX(0px)'
+             }">
         <div
             class="z-swiper__item"
             ref="swiperItems"
@@ -48,6 +48,8 @@
 </template>
 
 <script>
+import throttle from 'lodash.throttle'
+
 const getCssValue = (str) => {
   const matchResult = String(str).match(/[+-]?(0|([1-9]\d*))(\.\d+)?/)
   return matchResult === null ? Number(str) : Number(matchResult[0])
@@ -140,7 +142,7 @@ export default {
           root: this.$refs.swiperBody,
         });
 
-        this.$z_.forEach(this.$refs.swiperItems, (el) => {
+        this.$refs.swiperItems.forEach((el) => {
           observer.observe(el);
         });
       })
@@ -155,7 +157,7 @@ export default {
     initDoubleList() {
       const mid = Math.floor((this.list.length / 2));
       this.halfLen = mid;
-      this.doubleList = this.$z_.flatten([ this.list.slice(mid), this.list, this.list.slice(0, mid) ])
+      this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
     },
     computeItemWidth() {
       const innerWidthCssUnit = getCssUnit(this.innerWidth);
@@ -166,6 +168,7 @@ export default {
       }
 
       const innerWidthValue = getCssValue(this.innerWidth);
+      console.log('innerWidthValue', innerWidthValue);
       const spanGapValue = getCssValue(this.spanGap);
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength;
@@ -219,12 +222,12 @@ export default {
     async _slideLeft() {
       const entries = await this.getObserveEntries();
 
-      const firstVisibleIndex = this.$z_.findIndex(entries, (item) => {
+      const firstVisibleIndex = entries.findIndex((item) => {
         // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
         return item.intersectionRatio >= this.intersectionRatioThreshold;
       });
 
-      const isAllVisible = this.$z_.filter(entries, (item) => {
+      const isAllVisible = entries.filter((item) => {
         return item.intersectionRatio >= this.intersectionRatioThreshold
       }).length === this.halfLen;
 
@@ -249,11 +252,11 @@ export default {
     async _slideRight() {
       const entries = await this.getObserveEntries();
 
-      const lastVisibleIndex = this.$z_.findLastIndex(entries, (item) => {
+      const lastVisibleIndex = entries.findLastIndex((item) => {
         return item.intersectionRatio >= this.intersectionRatioThreshold;
       });
 
-      const isAllVisible = this.$z_.filter(entries, (item) => {
+      const isAllVisible = entries.filter((item) => {
         return item.intersectionRatio >= this.intersectionRatioThreshold;
       }).length === this.halfLen;
 
@@ -329,7 +332,7 @@ export default {
       this.replay();
     }
 
-    this.handleSlide = this.$z_.throttle((isLeft) => {
+    this.handleSlide = throttle((isLeft) => {
       cancelAnimationFrame(this.animationInterval);
 
       Object.assign(this.$refs.swiperWrapper.style, {
