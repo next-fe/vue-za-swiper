@@ -8,12 +8,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "lodash.throttle": "^4.1.1",
-    "vue": "^3.2.25"
+    "lodash.throttle": "4.1.1",
+    "vue": "3.2.25"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.3.1",
-    "sass": "^1.50.1",
-    "vite": "^2.9.5"
+    "@vitejs/plugin-vue": "2.3.1",
+    "sass": "1.50.1",
+    "vite": "2.9.5"
   }
 }
