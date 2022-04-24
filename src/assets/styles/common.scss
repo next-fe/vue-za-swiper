@@ -1,0 +1,30 @@
+@mixin flex-center($direction: row, $justify: center, $align: center, $flex-wrap: null) {
+  display: flex !important;
+
+  @if ($direction != null) {
+    flex-direction: $direction;
+  }
+  @if ($justify != null) {
+    justify-content: $justify;
+  }
+  @if ($align != null) {
+    align-items: $align;
+  }
+  @if ($flex-wrap != null) {
+    flex-wrap: $flex-wrap;
+  }
+}
+
+@mixin set-img($url, $size: contain) {
+    background-image: url($url);
+    background-size: $size;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+@mixin relative-center() {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
