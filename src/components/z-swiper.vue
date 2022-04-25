@@ -76,7 +76,7 @@ export default {
       required: true,
     },
     visibleLength: {
-      type: String,
+      type: Number,
       required: true,
     },
     spanGap: {
@@ -116,6 +116,7 @@ export default {
       replayTimer: null,
       animationInterval: null,
       doubleList: [],
+      playing: false,
     }
   },
   computed: {
@@ -168,7 +169,6 @@ export default {
       }
 
       const innerWidthValue = getCssValue(this.innerWidth);
-      console.log('innerWidthValue', innerWidthValue);
       const spanGapValue = getCssValue(this.spanGap);
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength;
@@ -203,6 +203,10 @@ export default {
       clearTimeout(this.replayTimer);
 
       this.replayTimer = setTimeout(() => {
+        if (this.playing) {
+          return;
+        }
+
         this.play();
       }, this.playDelay);
     },
@@ -235,19 +239,16 @@ export default {
       const target = entries[targetIndex];
 
       const xDiff = target.boundingClientRect.left - target.rootBounds.left;
-
       this.translateX -= xDiff;
-      const translateXOpt = Math.abs(this.translateX);
+      this.setDomTranslateX(this.translateX);
 
+      const translateXOpt = Math.abs(this.translateX);
       setTimeout(() => {
         if (translateXOpt >= this.rightBorder) {
-          // 比如 13 - 8 后得到真实索引 5，视口第一个元素就是索引为 5 的元素
           this.translateX = -(this.itemFullWidth * (targetIndex - this.list.length));
           this.setDomTranslateX(this.translateX);
         }
       }, this.slideAnimationDuration);
-
-      this.setDomTranslateX(this.translateX);
     },
     async _slideRight() {
       const entries = await this.getObserveEntries();
@@ -264,10 +265,10 @@ export default {
       const target = entries[targetIndex];
 
       const xDiff = target.rootBounds.right - target.boundingClientRect.right;
-
       this.translateX += xDiff;
-      const translateXOpt = Math.abs(this.translateX);
+      this.setDomTranslateX(this.translateX);
 
+      const translateXOpt = Math.abs(this.translateX);
       setTimeout(() => {
         if (translateXOpt <= this.leftBorder) {
           // targetIndex - this.halfLen 拿到前置位的索引，也就是将 targetIndex - this.halfLen 放到左边界的位置，此时 targetIndex 刚好在右边界
@@ -275,8 +276,6 @@ export default {
           this.setDomTranslateX(this.translateX);
         }
       }, this.slideAnimationDuration);
-
-      this.setDomTranslateX(this.translateX);
     },
     /*
      * event handle
@@ -288,6 +287,7 @@ export default {
       this.handleSlide();
     },
     touchstart(evt) {
+      this.playing = true;
       // 兼容某些安卓手机只触发一次 touchmove 的问题
       // https://blog.csdn.net/cdnight/article/details/50625391
       evt.preventDefault();
@@ -310,6 +310,8 @@ export default {
       this.setMove(xDiff);
     },
     touchend() {
+      this.playing = false;
+
       if (this.autoPlay) {
         this.replay();
       }
@@ -332,6 +334,7 @@ export default {
       this.replay();
     }
 
+    // 使用 throttle 避免用户快速连续点击导致动画出问题
     this.handleSlide = throttle((isLeft) => {
       cancelAnimationFrame(this.animationInterval);
 
