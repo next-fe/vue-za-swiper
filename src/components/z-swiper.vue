@@ -49,16 +49,7 @@
 
 <script>
 import _ from '../utils/lodash'
-
-const getCssValue = (str) => {
-  const matchResult = String(str).match(/[+-]?(0|([1-9]\d*))(\.\d+)?/)
-  return Number(matchResult[0])
-}
-
-const getCssUnit = (str) => {
-  const matchResult = String(str).match(/([a-z]+)/)
-  return matchResult[1]
-}
+import Utils from '../utils/index'
 
 export default {
   name: 'z-swiper',
@@ -165,7 +156,6 @@ export default {
       })
     },
     getDomTranslateX() {
-      // TODO 封装获取样式方法
       return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0]);
     },
     setDomTranslateX(translateX) {
@@ -177,27 +167,24 @@ export default {
       this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
     },
     initItemWidth() {
-      const innerWidthCssUnit = getCssUnit(this.computedInnerWidth);
-      const spanGapCssUnit = getCssUnit(this.computedSpanGap);
+      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth);
+      const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap);
 
       if (innerWidthCssUnit !== spanGapCssUnit) {
         throw new Error('Please unite spanGap、innerWidth css unit');
       }
 
-      const innerWidthValue = getCssValue(this.computedInnerWidth);
-      const spanGapValue = getCssValue(this.computedSpanGap);
+      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth);
+      const spanGapValue = Utils.getCssValue(this.computedSpanGap);
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength;
 
       this.itemWidth = itemWidthValue + innerWidthCssUnit;
     },
     initItemFullWidth() {
-      const itemDom = this.$refs.swiperItems[0];
-      const itemWidth = Number(window.getComputedStyle(itemDom).getPropertyValue('width').replace('px', ''));
-
+      const itemDom = this.$refs.swiperItems[0]
       // clientWidth 算出来宽度的数会有一点偏差，用 window.getComputedStyle 最精确
-      const renderedSpanGap = Number(window.getComputedStyle(itemDom).getPropertyValue('margin-right').replace('px', ''));
-      this.itemFullWidth = itemWidth + renderedSpanGap;
+      this.itemFullWidth = Utils.getDomPropertyValue(itemDom,'width') + Utils.getDomPropertyValue(itemDom,'margin-right')
     },
     initTranslateX() {
       const translateX = this.getDomTranslateX() - this.itemFullWidth * this.halfLen;
@@ -226,15 +213,14 @@ export default {
         this.play();
       }, this.playDelay);
     },
-    // TODO setMove、_slideLeft、_slideRight 逻辑复用
     setMove(xDiff) {
       this.translateX += xDiff;
-      const translateXOpt = Math.abs(this.translateX);
+      const translateXAbs = Math.abs(this.translateX);
 
-      if (translateXOpt >= this.rightBorder) {
-        this.translateX = -(this.leftBorder + (translateXOpt - this.rightBorder));
-      } else if (translateXOpt <= this.leftBorder) {
-        this.translateX = -(this.rightBorder - (this.leftBorder - translateXOpt));
+      if (translateXAbs >= this.rightBorder) {
+        this.translateX = -(this.leftBorder + (translateXAbs - this.rightBorder));
+      } else if (translateXAbs <= this.leftBorder) {
+        this.translateX = -(this.rightBorder - (this.leftBorder - translateXAbs));
       }
 
       this.setDomTranslateX(this.translateX);
@@ -258,9 +244,9 @@ export default {
       this.translateX -= xDiff;
       this.setDomTranslateX(this.translateX);
 
-      const translateXOpt = Math.abs(this.translateX);
+      const translateXAbs = Math.abs(this.translateX);
       setTimeout(() => {
-        if (translateXOpt >= this.rightBorder) {
+        if (translateXAbs >= this.rightBorder) {
           this.translateX = -(this.itemFullWidth * (targetIndex - this.list.length));
           this.setDomTranslateX(this.translateX);
         }
@@ -284,10 +270,9 @@ export default {
       this.translateX += xDiff;
       this.setDomTranslateX(this.translateX);
 
-      const translateXOpt = Math.abs(this.translateX);
+      const translateXAbs = Math.abs(this.translateX);
       setTimeout(() => {
-        if (translateXOpt <= this.leftBorder) {
-          // targetIndex - this.halfLen 拿到前置位的索引，也就是将 targetIndex - this.halfLen 放到左边界的位置，此时 targetIndex 刚好在右边界
+        if (translateXAbs <= this.leftBorder) {
           this.translateX = -(this.itemFullWidth * (targetIndex - this.halfLen + 1 + this.list.length));
           this.setDomTranslateX(this.translateX);
         }
