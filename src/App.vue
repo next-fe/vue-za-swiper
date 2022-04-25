@@ -3,13 +3,13 @@
     <div class="demo-page__swiper-box">
       <z-swiper
           v-if="list.length"
-          auto-play
+          :auto-play="false"
           :list="list"
           :visible-length="4"
-          inner-height="55px"
-          inner-width="270px"
-          side-gap="16px"
-          span-gap="16px">
+          :inner-height="55"
+          :inner-width="270"
+          :side-gap="16"
+          :span-gap="16">
 
         <template #left>
           <img src="./assets/images/icon-triangle-left.png">

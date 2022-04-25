@@ -16,15 +16,15 @@
       <div class="z-swiper__list"
            ref="swiperWrapper"
            :style="{
-               width: innerWidth,
-               height: innerHeight,
+               width: computedInnerWidth,
+               height: computedInnerHeight,
                transform: 'translateX(0px)'
              }">
         <div
             class="z-swiper__item"
             ref="swiperItems"
             :style="{
-                       marginRight: spanGap,
+                       marginRight: computedSpanGap,
                        width: itemWidth,
                        height: '100%',
                     }"
@@ -48,16 +48,16 @@
 </template>
 
 <script>
-import throttle from 'lodash.throttle'
+import _ from '../utils/lodash'
 
 const getCssValue = (str) => {
   const matchResult = String(str).match(/[+-]?(0|([1-9]\d*))(\.\d+)?/)
-  return matchResult === null ? Number(str) : Number(matchResult[0])
+  return Number(matchResult[0])
 }
 
 const getCssUnit = (str) => {
   const matchResult = String(str).match(/([a-z]+)/)
-  return matchResult === null ? 'px' : matchResult[1]
+  return matchResult[1]
 }
 
 export default {
@@ -68,24 +68,24 @@ export default {
       required: true,
     },
     innerHeight: {
-      type: String,
+      type: [ Number, String ],
       required: true,
     },
     innerWidth: {
-      type: String,
+      type: [ Number, String ],
       required: true,
+    },
+    spanGap: {
+      type: [ Number, String ],
+      default: 0,
+    },
+    sideGap: {
+      type: [ Number, String ],
+      default: 0,
     },
     visibleLength: {
       type: Number,
       required: true,
-    },
-    spanGap: {
-      type: String,
-      default: 0,
-    },
-    sideGap: {
-      type: String,
-      default: 0,
     },
     autoPlay: {
       type: Boolean,
@@ -99,6 +99,10 @@ export default {
       type: Number,
       default: 2000,
     },
+    playImmediate: {
+      type: Boolean,
+      default: false,
+    },
     slideAnimationDuration: {
       type: Number,
       default: 300,
@@ -109,7 +113,7 @@ export default {
       halfLen: 0,
       leftBorder: 0,
       rightBorder: 0,
-      itemWidth: this.computeItemWidth(),
+      itemWidth: 0,
       itemFullWidth: 0,
       lastX: 0,
       intersectionRatioThreshold: 0.95,
@@ -120,9 +124,21 @@ export default {
     }
   },
   computed: {
+    computedInnerWidth() {
+      return _.isNumber(this.innerWidth) ? `${ this.innerWidth }px` : this.innerWidth;
+    },
+    computedInnerHeight() {
+      return _.isNumber(this.innerHeight) ? `${ this.innerHeight }px` : this.innerHeight;
+    },
+    computedSpanGap() {
+      return _.isNumber(this.spanGap) ? `${ this.spanGap }px` : this.spanGap;
+    },
+    computedSideGap() {
+      return _.isNumber(this.sideGap) ? `${ this.sideGap }px` : this.sideGap;
+    },
     customBtnStyle() {
       return {
-        padding: `0 ${ this.sideGap }`
+        padding: `0 ${ this.computedSideGap }`
       }
     },
     useLeft() {
@@ -160,20 +176,20 @@ export default {
       this.halfLen = mid;
       this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
     },
-    computeItemWidth() {
-      const innerWidthCssUnit = getCssUnit(this.innerWidth);
-      const spanGapCssUnit = getCssUnit(this.spanGap);
+    initItemWidth() {
+      const innerWidthCssUnit = getCssUnit(this.computedInnerWidth);
+      const spanGapCssUnit = getCssUnit(this.computedSpanGap);
 
       if (innerWidthCssUnit !== spanGapCssUnit) {
         throw new Error('Please unite spanGap、innerWidth css unit');
       }
 
-      const innerWidthValue = getCssValue(this.innerWidth);
-      const spanGapValue = getCssValue(this.spanGap);
+      const innerWidthValue = getCssValue(this.computedInnerWidth);
+      const spanGapValue = getCssValue(this.computedSpanGap);
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength;
 
-      return itemWidthValue + innerWidthCssUnit;
+      this.itemWidth = itemWidthValue + innerWidthCssUnit;
     },
     initItemFullWidth() {
       const itemDom = this.$refs.swiperItems[0];
@@ -301,70 +317,76 @@ export default {
     touchmove(evt) {
       // 修复某些安卓手机左滑时页面后退的问题
       // https://www.cnblogs.com/Miracle-ZLZ/p/7852421.html
-      evt.preventDefault();
+      evt.preventDefault()
 
-      const touch = evt.targetTouches[0];
-      const xDiff = touch.pageX - this.lastX;
+      const touch = evt.targetTouches[0]
+      const xDiff = touch.pageX - this.lastX
 
-      this.lastX = touch.pageX;
-      this.setMove(xDiff);
+      this.lastX = touch.pageX
+      this.setMove(xDiff)
     },
     touchend() {
-      this.playing = false;
+      this.playing = false
 
       if (this.autoPlay) {
-        this.replay();
+        this.replay()
       }
     },
     touchcancel() {
       // 兼容小米手机不触发 touchend 问题
-      this.touchend();
+      this.touchend()
     },
   },
   created() {
-    this.initDoubleList();
+    this.initItemWidth()
+    this.initDoubleList()
   },
   mounted() {
-    this.initItemFullWidth();
-    const initialTranslateX = this.initTranslateX();
-    this.leftBorder = initialTranslateX;
-    this.rightBorder = this.itemFullWidth * this.list.length + initialTranslateX;
+    this.initItemFullWidth()
+    const initialTranslateX = this.initTranslateX()
+    this.leftBorder = initialTranslateX
+    this.rightBorder = this.itemFullWidth * this.list.length + initialTranslateX
 
     if (this.autoPlay) {
-      this.replay();
+      if (this.playImmediate) {
+        this.play()
+        return
+      }
+
+      this.replay()
     }
 
     // 使用 throttle 避免用户快速连续点击导致动画出问题
-    this.handleSlide = throttle((isLeft) => {
-      cancelAnimationFrame(this.animationInterval);
+    this.handleSlide = _.throttle((isLeft) => {
+      cancelAnimationFrame(this.animationInterval)
 
       Object.assign(this.$refs.swiperWrapper.style, {
         'transition-duration': `${ this.slideAnimationDuration }ms`,
-      });
+      })
 
-      this.translateX = this.getDomTranslateX();
+      this.translateX = this.getDomTranslateX()
 
       if (isLeft) {
-        this._slideLeft();
+        this._slideLeft()
       } else {
-        this._slideRight();
+        this._slideRight()
       }
 
       setTimeout(() => {
         Object.assign(this.$refs.swiperWrapper.style, {
           'transition-duration': '0ms',
-        });
+        })
 
         if (this.autoPlay) {
-          this.replay();
+          this.replay()
         }
-      }, this.slideAnimationDuration);
+      }, this.slideAnimationDuration)
 
     }, this.slideAnimationDuration + 300, {
       trailing: false,
-    });
+    })
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
