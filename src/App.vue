@@ -3,7 +3,7 @@
     <div class="demo-page__swiper-box">
       <z-swiper
           v-if="list.length"
-          :auto-play="false"
+          auto-play
           :list="list"
           :visible-length="4"
           :inner-height="55"
@@ -73,16 +73,6 @@ export default {
 html, body {
   padding: 0;
   margin: 0;
-  background: darkslategrey;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
 
@@ -91,10 +81,14 @@ html, body {
 
 .demo-page {
   @include flex-center();
+  background: center/cover url("./assets/images/main-bg.jpeg");
+  width: 100vw;
+  height: 100vh;
 
   &__swiper-box {
-    margin-top: 10px;
     min-height: 55px;
+    position: absolute;
+    top: 80px;
   }
 
   &__item {
