@@ -2,7 +2,8 @@
   "private": true,
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
@@ -27,10 +28,12 @@
     "eslint-plugin-import": "^2.26.0",
     "sass": "1.50.1",
     "vite": "2.9.5",
-    "husky": "7.0.4",
     "vite-plugin-vue2": "2.0.0",
     "vue-eslint-parser": "^8.3.0",
     "vue-template-compiler": "2.6.14",
-    "lint-staged": "12.4.0"
+    "@commitlint/cli": "8.3.5",
+    "@commitlint/config-conventional": "8.3.4",
+    "husky": "4.2.3",
+    "lint-staged": "10.1.2"
   }
 }
