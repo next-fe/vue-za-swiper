@@ -8,6 +8,6 @@ export default {
     return matchResult[1]
   },
   getDomPropertyValue(dom, property) {
-    return Number(window.getComputedStyle(dom).getPropertyValue(property).replace('px', ''));
-  }
+    return Number(window.getComputedStyle(dom).getPropertyValue(property).replace('px', ''))
+  },
 }

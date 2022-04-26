@@ -21,19 +21,19 @@
                transform: 'translateX(0px)'
              }">
         <div
-            class="z-swiper__item"
-            ref="swiperItems"
-            :style="{
+          class="z-swiper__item"
+          ref="swiperItems"
+          :style="{
                        marginRight: computedSpanGap,
                        width: itemWidth,
                        height: '100%',
                     }"
-            v-for="(item, index) in doubleList"
-            :data-index="index"
-            :key="index">
+          v-for="(item, index) in doubleList"
+          :data-index="index"
+          :key="index">
           <slot
-              :item="item"
-              :index="index"/>
+            :item="item"
+            :index="index"/>
         </div>
       </div>
     </div>
@@ -59,19 +59,19 @@ export default {
       required: true,
     },
     innerHeight: {
-      type: [ Number, String ],
+      type: [Number, String],
       required: true,
     },
     innerWidth: {
-      type: [ Number, String ],
+      type: [Number, String],
       required: true,
     },
     spanGap: {
-      type: [ Number, String ],
+      type: [Number, String],
       default: 0,
     },
     sideGap: {
-      type: [ Number, String ],
+      type: [Number, String],
       default: 0,
     },
     visibleLength: {
@@ -116,188 +116,184 @@ export default {
   },
   computed: {
     computedInnerWidth() {
-      return _.isNumber(this.innerWidth) ? `${ this.innerWidth }px` : this.innerWidth;
+      return _.isNumber(this.innerWidth) ? `${this.innerWidth}px` : this.innerWidth
     },
     computedInnerHeight() {
-      return _.isNumber(this.innerHeight) ? `${ this.innerHeight }px` : this.innerHeight;
+      return _.isNumber(this.innerHeight) ? `${this.innerHeight}px` : this.innerHeight
     },
     computedSpanGap() {
-      return _.isNumber(this.spanGap) ? `${ this.spanGap }px` : this.spanGap;
+      return _.isNumber(this.spanGap) ? `${this.spanGap}px` : this.spanGap
     },
     computedSideGap() {
-      return _.isNumber(this.sideGap) ? `${ this.sideGap }px` : this.sideGap;
+      return _.isNumber(this.sideGap) ? `${this.sideGap}px` : this.sideGap
     },
     customBtnStyle() {
       return {
-        padding: `0 ${ this.computedSideGap }`
+        padding: `0 ${this.computedSideGap}`,
       }
     },
     useLeft() {
-      return this.$slots['left'];
+      return this.$slots.left
     },
     useRight() {
-      return this.$slots['right'];
+      return this.$slots.right
     },
   },
   methods: {
     getObserveEntries() {
       return new Promise((resolve) => {
-        const observer = new IntersectionObserver((entries) => {
-          observer.disconnect();
+        const observer = new window.IntersectionObserver((entries) => {
+          observer.disconnect()
 
-          resolve(entries);
+          resolve(entries)
         }, {
           root: this.$refs.swiperBody,
-        });
+        })
 
         this.$refs.swiperItems.forEach((el) => {
-          observer.observe(el);
-        });
+          observer.observe(el)
+        })
       })
     },
     getDomTranslateX() {
-      return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0]);
+      return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0])
     },
     setDomTranslateX(translateX) {
-      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX }px)`;
+      this.$refs.swiperWrapper.style.transform = `translateX(${translateX}px)`
     },
     initDoubleList() {
-      const mid = Math.floor((this.list.length / 2));
-      this.halfLen = mid;
-      this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
+      const mid = Math.floor((this.list.length / 2))
+      this.halfLen = mid
+      this.doubleList = [...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid)]
     },
     initItemWidth() {
-      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth);
-      const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap);
+      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth)
+      const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap)
 
       if (innerWidthCssUnit !== spanGapCssUnit) {
-        throw new Error('Please unite spanGap、innerWidth css unit');
+        throw new Error('Please unite spanGap、innerWidth css unit')
       }
 
-      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth);
-      const spanGapValue = Utils.getCssValue(this.computedSpanGap);
+      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth)
+      const spanGapValue = Utils.getCssValue(this.computedSpanGap)
 
-      const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength;
+      const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
 
-      this.itemWidth = itemWidthValue + innerWidthCssUnit;
+      this.itemWidth = itemWidthValue + innerWidthCssUnit
     },
     initItemFullWidth() {
       const itemDom = this.$refs.swiperItems[0]
       // clientWidth 算出来宽度的数会有一点偏差，用 window.getComputedStyle 最精确
-      this.itemFullWidth = Utils.getDomPropertyValue(itemDom,'width') + Utils.getDomPropertyValue(itemDom,'margin-right')
+      this.itemFullWidth = Utils.getDomPropertyValue(itemDom, 'width') + Utils.getDomPropertyValue(itemDom, 'margin-right')
     },
     initTranslateX() {
-      const translateX = this.getDomTranslateX() - this.itemFullWidth * this.halfLen;
-      this.setDomTranslateX(translateX);
+      const translateX = this.getDomTranslateX() - this.itemFullWidth * this.halfLen
+      this.setDomTranslateX(translateX)
 
-      return Math.abs(translateX);
+      return Math.abs(translateX)
     },
     play() {
-      this.translateX = this.getDomTranslateX();
+      this.translateX = this.getDomTranslateX()
 
       const animationCallback = () => {
-        this.setMove(this.step);
-        this.animationInterval = requestAnimationFrame(animationCallback);
+        this.setMove(this.step)
+        this.animationInterval = window.requestAnimationFrame(animationCallback)
       }
 
-      this.animationInterval = requestAnimationFrame(animationCallback);
+      this.animationInterval = window.requestAnimationFrame(animationCallback)
     },
     replay() {
-      clearTimeout(this.replayTimer);
+      clearTimeout(this.replayTimer)
 
       this.replayTimer = setTimeout(() => {
         if (this.playing) {
-          return;
+          return
         }
 
-        this.play();
-      }, this.playDelay);
+        this.play()
+      }, this.playDelay)
     },
     setMove(xDiff) {
-      this.translateX += xDiff;
-      const translateXAbs = Math.abs(this.translateX);
+      this.translateX += xDiff
+      const translateXAbs = Math.abs(this.translateX)
 
       if (translateXAbs >= this.rightBorder) {
-        this.translateX = -(this.leftBorder + (translateXAbs - this.rightBorder));
+        this.translateX = -(this.leftBorder + (translateXAbs - this.rightBorder))
       } else if (translateXAbs <= this.leftBorder) {
-        this.translateX = -(this.rightBorder - (this.leftBorder - translateXAbs));
+        this.translateX = -(this.rightBorder - (this.leftBorder - translateXAbs))
       }
 
-      this.setDomTranslateX(this.translateX);
+      this.setDomTranslateX(this.translateX)
     },
-    async _slideLeft() {
-      const entries = await this.getObserveEntries();
+    _slideLeft() {
+      this.getObserveEntries().then((entries) => {
+        const firstVisibleIndex = entries
+          .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+          // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
 
-      const firstVisibleIndex = entries.findIndex((item) => {
-        // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
-        return item.intersectionRatio >= this.intersectionRatioThreshold;
-      });
+        const isAllVisible = entries
+          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
 
-      const isAllVisible = entries.filter((item) => {
-        return item.intersectionRatio >= this.intersectionRatioThreshold
-      }).length === this.halfLen;
+        const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex
+        const target = entries[targetIndex]
 
-      const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex;
-      const target = entries[targetIndex];
+        const xDiff = target.boundingClientRect.left - target.rootBounds.left
+        this.translateX -= xDiff
+        this.setDomTranslateX(this.translateX)
 
-      const xDiff = target.boundingClientRect.left - target.rootBounds.left;
-      this.translateX -= xDiff;
-      this.setDomTranslateX(this.translateX);
-
-      const translateXAbs = Math.abs(this.translateX);
-      setTimeout(() => {
-        if (translateXAbs >= this.rightBorder) {
-          this.translateX = -(this.itemFullWidth * (targetIndex - this.list.length));
-          this.setDomTranslateX(this.translateX);
-        }
-      }, this.slideAnimationDuration);
+        const translateXAbs = Math.abs(this.translateX)
+        setTimeout(() => {
+          if (translateXAbs >= this.rightBorder) {
+            this.translateX = -(this.itemFullWidth * (targetIndex - this.list.length))
+            this.setDomTranslateX(this.translateX)
+          }
+        }, this.slideAnimationDuration)
+      })
     },
-    async _slideRight() {
-      const entries = await this.getObserveEntries();
+    _slideRight() {
+      this.getObserveEntries().then(((entries) => {
+        const lastVisibleIndex = entries
+          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
 
-      const lastVisibleIndex = entries.findLastIndex((item) => {
-        return item.intersectionRatio >= this.intersectionRatioThreshold;
-      });
+        const isAllVisible = entries
+          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
 
-      const isAllVisible = entries.filter((item) => {
-        return item.intersectionRatio >= this.intersectionRatioThreshold;
-      }).length === this.halfLen;
+        const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
+        const target = entries[targetIndex]
 
-      const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex;
-      const target = entries[targetIndex];
+        const xDiff = target.rootBounds.right - target.boundingClientRect.right
+        this.translateX += xDiff
+        this.setDomTranslateX(this.translateX)
 
-      const xDiff = target.rootBounds.right - target.boundingClientRect.right;
-      this.translateX += xDiff;
-      this.setDomTranslateX(this.translateX);
-
-      const translateXAbs = Math.abs(this.translateX);
-      setTimeout(() => {
-        if (translateXAbs <= this.leftBorder) {
-          this.translateX = -(this.itemFullWidth * (targetIndex - this.halfLen + 1 + this.list.length));
-          this.setDomTranslateX(this.translateX);
-        }
-      }, this.slideAnimationDuration);
+        const translateXAbs = Math.abs(this.translateX)
+        setTimeout(() => {
+          if (translateXAbs <= this.leftBorder) {
+            this.translateX = -(this.itemFullWidth * (targetIndex - this.halfLen + 1 + this.list.length))
+            this.setDomTranslateX(this.translateX)
+          }
+        }, this.slideAnimationDuration)
+      }))
     },
     /*
      * event handle
      */
     slideLeft() {
-      this.handleSlide(true);
+      this.handleSlide(true)
     },
     slideRight() {
-      this.handleSlide();
+      this.handleSlide()
     },
     touchstart(evt) {
-      this.playing = true;
+      this.playing = true
       // 兼容某些安卓手机只触发一次 touchmove 的问题
       // https://blog.csdn.net/cdnight/article/details/50625391
-      evt.preventDefault();
-      cancelAnimationFrame(this.animationInterval);
+      evt.preventDefault()
+      window.cancelAnimationFrame(this.animationInterval)
 
-      const touch = evt.targetTouches[0];
+      const touch = evt.targetTouches[0]
 
-      this.lastX = touch.pageX;
-      this.translateX = this.getDomTranslateX();
+      this.lastX = touch.pageX
+      this.translateX = this.getDomTranslateX()
     },
     touchmove(evt) {
       // 修复某些安卓手机左滑时页面后退的问题
@@ -343,10 +339,10 @@ export default {
 
     // 使用 throttle 避免用户快速连续点击导致动画出问题
     this.handleSlide = _.throttle((isLeft) => {
-      cancelAnimationFrame(this.animationInterval)
+      window.cancelAnimationFrame(this.animationInterval)
 
       Object.assign(this.$refs.swiperWrapper.style, {
-        'transition-duration': `${ this.slideAnimationDuration }ms`,
+        'transition-duration': `${this.slideAnimationDuration}ms`,
       })
 
       this.translateX = this.getDomTranslateX()
@@ -366,7 +362,6 @@ export default {
           this.replay()
         }
       }, this.slideAnimationDuration)
-
     }, this.slideAnimationDuration + 300, {
       trailing: false,
     })

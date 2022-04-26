@@ -64,9 +64,9 @@ export default {
           IMG7,
           IMG8,
         ])
-      }, 100);
+      }, 100)
     })
-  }
+  },
 }
 </script>
 
