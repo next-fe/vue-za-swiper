@@ -1,14 +1,18 @@
+import path from 'path'
 import { defineConfig } from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
-
-
-console.log('111111111')
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     createVuePlugin(),
   ],
+  resolve: {
+    alias: {
+      'common': path.resolve(__dirname, '../common'),
+      'z-swiper': path.resolve(__dirname, '../packages/index.js'),
+    },
+  },
   build: {
     rollupOptions: {
       // 请确保外部化那些你的库中不需要的依赖

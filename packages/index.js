@@ -1,3 +1,3 @@
-import ZSwiper from '../src/components/z-swiper.vue'
+import ZSwiper from './z-swiper.vue'
 
 export default ZSwiper

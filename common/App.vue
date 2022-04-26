@@ -12,7 +12,7 @@
           :span-gap="16">
 
         <template #left>
-          <img src="./assets/images/icon-triangle-left.png">
+          <img src="common/assets/images/icon-triangle-left.png">
         </template>
 
         <template #default="{ item }">
@@ -22,7 +22,7 @@
         </template>
 
         <template #right>
-          <img src="./assets/images/icon-triangle-right.png">
+          <img src="common/assets/images/icon-triangle-right.png">
         </template>
 
       </z-swiper>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import ZSwiper from './components/z-swiper.vue'
+import ZSwiper from 'z-swiper'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
 import IMG3 from './assets/images/model/3.png'
@@ -72,7 +72,7 @@ export default {
 
 <style lang="scss" scoped>
 .demo-page {
-  background: center/cover url("./assets/images/main-bg.jpeg");
+  background: center/cover url("assets/images/main-bg.jpeg");
   width: 100vw;
   height: 100vh;
 

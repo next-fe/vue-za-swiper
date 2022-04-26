@@ -1,43 +1,20 @@
 {
-  "private": true,
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
-    }
-  },
-  "lint-staged": {
-    "**/*.{js,vue}": [
-      "npm run lint:fix"
-    ]
-  },
+  "name": "z-swiper",
+  "version": "1.0.0",
+  "description": "smoothly swiper",
   "scripts": {
-    "dev": "vite",
-    "dev-vue2": "vite --config vite.config.vue2.js",
-    "build": "npm run build-vue2 && npm run build-vue3",
-    "build-vue2": "vite --config vite.config.vue2.js",
-    "build-vue3": "vite build",
-    "lint": "eslint \"**/*.{vue,js}\"",
-    "lint:fix": "eslint \"**/*.{vue,js}\" --fix"
+    "dev": "za-dev-vue",
+    "prod": "za-prod-vue",
+    "build": "za-build-vue",
+    "lint": "eslint --ext .js,.vue",
+    "gen": "node ./cli/bin/index.js",
+    "lintfix": "eslint --fix --ext .js,.vue"
   },
-  "dependencies": {
-    "lodash-es": "4.17.21",
-    "vue": "3.2.33",
-    "vue2": "npm:vue@2.6.14"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "8.3.5",
-    "@commitlint/config-conventional": "8.3.4",
-    "@vitejs/plugin-vue": "2.3.1",
-    "eslint": "8.10.0",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.26.0",
-    "husky": "4.2.3",
-    "lint-staged": "10.1.2",
-    "sass": "1.50.1",
-    "vite": "2.9.5",
-    "vite-plugin-vue2": "2.0.0",
-    "vue-eslint-parser": "8.3.0",
-    "vue-template-compiler": "2.6.14"
-  }
+  "keywords": [
+    "vue",
+    "build",
+    "ZA"
+  ],
+  "author": "ZAFE",
+  "license": "MIT"
 }

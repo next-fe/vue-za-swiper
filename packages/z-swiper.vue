@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import _ from '../utils/lodash'
-import Utils from '../utils/index'
+import _ from 'common/utils/lodash'
+import Utils from 'common/utils'
 
 export default {
   name: 'z-swiper',
@@ -370,7 +370,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/styles/common';
+@import 'common/assets/styles/common';
 
 .z-swiper {
   position: relative;
