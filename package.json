@@ -6,6 +6,11 @@
       "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
     }
   },
+  "lint-staged": {
+    "**/*.{js,vue}": [
+      "npm run lint:fix"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -171,7 +171,7 @@ export default {
       const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap)
 
       if (innerWidthCssUnit !== spanGapCssUnit) {
-        throw new Error('Please unite spanGap、innerWidth css unit')
+        throw new Error('Please unite spanGap、innerWidth css unit');
       }
 
       const innerWidthValue = Utils.getCssValue(this.computedInnerWidth);
