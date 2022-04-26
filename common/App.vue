@@ -72,7 +72,7 @@ export default {
 
 <style lang="scss" scoped>
 .demo-page {
-  background: center/cover url("assets/images/main-bg.jpeg");
+  background: center/cover url("common/assets/images/main-bg.jpeg");
   width: 100vw;
   height: 100vh;
 

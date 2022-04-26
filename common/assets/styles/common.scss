@@ -15,13 +15,6 @@
   }
 }
 
-@mixin set-img($url, $size: contain) {
-    background-image: url($url);
-    background-size: $size;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-
 @mixin relative-center() {
     position: relative;
     left: 50%;
