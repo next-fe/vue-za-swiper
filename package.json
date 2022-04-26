@@ -1,13 +1,19 @@
 {
   "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
+    }
+  },
   "scripts": {
-    "postinstall": "husky install",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint \"**/*.{vue,js}\"",
     "lint:fix": "eslint \"**/*.{vue,js}\" --fix"
   },
   "dependencies": {
+    "lint-staged": "12.4.0",
     "lodash-es": "4.17.21",
     "vue": "2.6.14"
   },

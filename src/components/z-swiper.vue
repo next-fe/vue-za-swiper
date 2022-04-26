@@ -174,15 +174,15 @@ export default {
         throw new Error('Please unite spanGap、innerWidth css unit')
       }
 
-      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth)
-      const spanGapValue = Utils.getCssValue(this.computedSpanGap)
+      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth);
+      const spanGapValue = Utils.getCssValue(this.computedSpanGap);
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
 
-      this.itemWidth = itemWidthValue + innerWidthCssUnit;
+      this.itemWidth = itemWidthValue + innerWidthCssUnit
     },
     initItemFullWidth() {
-      const itemDom = this.$refs.swiperItems[0];
+      const itemDom = this.$refs.swiperItems[0]
       // clientWidth 算出来宽度的数会有一点偏差，用 getComputedStyle 最精确
       this.itemFullWidth = Utils.getDomPropertyValue(itemDom, 'width') + Utils.getDomPropertyValue(itemDom, 'margin-right')
     },
