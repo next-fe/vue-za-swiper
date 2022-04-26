@@ -21,6 +21,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: '../dist/vue3',
     rollupOptions: {
       // 请确保外部化那些你的库中不需要的依赖
       external: [ 'vue' ],
@@ -32,9 +33,9 @@ export default defineConfig({
       },
     },
     lib: {
-      entry: './packages/index.js',
-      fileName: 'z-swiper',
-      name: 'z-swiper',
+      entry: '../packages/index.js',
+      fileName: 'z-vue-swiper',
+      name: 'z-vue-swiper',
     },
   },
 })

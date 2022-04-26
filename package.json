@@ -3,16 +3,11 @@
   "version": "1.0.0",
   "description": "smoothly swiper",
   "scripts": {
-    "dev": "za-dev-vue",
-    "prod": "za-prod-vue",
-    "build": "za-build-vue",
-    "lint": "eslint --ext .js,.vue",
-    "gen": "node ./cli/bin/index.js",
-    "lintfix": "eslint --fix --ext .js,.vue"
+    "build": "za-build-vue"
   },
   "keywords": [
     "vue",
-    "build",
+    "swiper",
     "ZA"
   ],
   "author": "ZAFE",
