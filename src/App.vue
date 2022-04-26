@@ -16,6 +16,7 @@
         </template>
 
         <template #default="{ item }">
+          <!-- item 父容器的宽高在 Swiper 内部已经计算好，开发者在这里的 item 样式可以使用 width: 100%、height: 100% 铺满外层 -->
           <img :src="item"
                class="demo-page__item"/>
         </template>
@@ -69,18 +70,8 @@ export default {
 }
 </script>
 
-<style>
-html, body {
-  padding: 0;
-  margin: 0;
-}
-</style>
-
 <style lang="scss" scoped>
-@import './assets/styles/common';
-
 .demo-page {
-  @include flex-center();
   background: center/cover url("./assets/images/main-bg.jpeg");
   width: 100vw;
   height: 100vh;

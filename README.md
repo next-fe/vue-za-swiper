@@ -3,79 +3,114 @@
 
 ## 概述
 
+![zswiper-function](./docs/assets/zswiper-function.png)
+
 ## 代码示例
 
 ```vue
-
 <template>
-    <!-- 确保 list 加载完成才渲染组件-->
-    <z-swiper
-        v-if="dates.length"
-        :list="dates"
-        :visible-center-index="tabActiveIndex"
-        :inner-height="71"
-        :inner-width="530"
-        :visible-length="5"
-        :span-gap="20"
-        :side-gap="27">
+  <div class="demo-page">
+    <div class="demo-page__swiper-box">
+      <z-swiper
+          v-if="list.length"
+          auto-play
+          :list="list"
+          :visible-length="4"
+          :inner-height="55"
+          :inner-width="270"
+          :side-gap="16"
+          :span-gap="16">
 
-        <!--  编写左按钮样式 -->
-        <z-image
-            slot="left"
-            :width="16"
-            :height="31"
-            :src="require('../assets/images/icon-left.png')"/>
+        <template #left>
+          <img src="./assets/images/icon-triangle-left.png">
+        </template>
 
-        <!--  编写列表元素样式 -->
-        <div
-            slot-scope="{ item, index }"
-            :class="getTabClass(item, index)"
-            @click="changeDateTab(item, index)">
-            {{ item.tabDate }}
-        </div>
+        <template #default="{ item }">
+          <!-- item 父容器的宽高在 Swiper 内部已经计算好，开发者在这里的 item 样式可以使用 width: 100%、height: 100% 铺满外层 -->
+          <img :src="item"
+               class="demo-page__item"/>
+        </template>
 
-        <!--  编写右按钮样式 -->
-        <z-image
-            slot="right"
-            :width="16"
-            :height="31"
-            :src="require('../assets/images/icon-right.png')"/>
-    </z-swiper>
+        <template #right>
+          <img src="./assets/images/icon-triangle-right.png">
+        </template>
+
+      </z-swiper>
+    </div>
+  </div>
 </template>
 
 <script>
-import { createComponent } from "@/common-v2/framework";
+import ZSwiper from './components/z-swiper.vue'
+import IMG1 from './assets/images/model/1.png'
+import IMG2 from './assets/images/model/2.png'
+import IMG3 from './assets/images/model/3.png'
+import IMG4 from './assets/images/model/4.png'
+import IMG5 from './assets/images/model/5.png'
+import IMG6 from './assets/images/model/6.png'
+import IMG7 from './assets/images/model/7.png'
+import IMG8 from './assets/images/model/8.png'
 
-export default createComponent({
-    data() {
-        return {
-            dates: [],
-            tabActiveIndex: 3,
-        }
-    },
-    methods: {
-        changeDateTab(item, index) {
-            if (item.disable) {
-                return;
-            }
-
-            this.tabActiveIndex = index;
-        },
-        getTabClass(item, index) {
-            const result = [ 'tab-item' ];
-            const isActive = this.tabActiveIndex === index;
-
-            if (isActive) {
-                result.push('tab-item--active');
-            } else if (item.disable) {
-                result.push('tab-item--disable');
-            }
-
-            return result;
-        }
+export default {
+  components: {
+    ZSwiper,
+  },
+  data() {
+    return {
+      list: [],
     }
-})
+  },
+  async created() {
+    // get data from server
+    this.list = await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          IMG1,
+          IMG2,
+          IMG3,
+          IMG4,
+          IMG5,
+          IMG6,
+          IMG7,
+          IMG8,
+        ])
+      }, 100);
+    })
+  }
+}
 </script>
+
+<style lang="scss" scoped>
+.demo-page {
+  background: center/cover url("./assets/images/main-bg.jpeg");
+  width: 100vw;
+  height: 100vh;
+
+  &__swiper-box {
+    min-height: 55px;
+    position: absolute;
+    top: 80px;
+  }
+
+  &__item {
+    box-sizing: border-box;
+    border: 2px solid #FFFFFF;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  &__desc {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: 20px;
+  }
+}
+</style>
+
 ```
 
 ## API
@@ -83,15 +118,18 @@ export default createComponent({
 ### Props
 该组件所有属性均为非响应式属性，所以开发者需要保证数组加载完成才渲染组件，不然可能会有异常。
 
-| 参数                   | 说明                              | 类型            | 默认值      |
-|----------------------|---------------------------------|---------------|----------|
-| list                 | 数组，必填           | _Array\<any>_ | -        |
-| inner-height         | 高度，单位 `px`，必填                   | _number_      | -        |
-| inner-width          | 不包括 left、right slot，中部 tab 栏的宽度，必填 | _number_      | -        |
-| visible-length       | 可视元素个数 ，必填                      | _number_      | -        |
-| visible-center-index | 中央元素索引，组件 mounted 之后将该元素移动至视觉中央 | _number_ \    | _number_ | - |
-| span-gap             | 元素间距，单位 `px`                    | _number_      | 0        |
-| side-gap             | 两边间距，单位 `px`                    | _number_      | 0        |
+| 参数             | 说明                                         | 类型          | 默认值      |
+|----------------|--------------------------------------------|-------------|----------|
+| list           | 数组，必填                                      | _Array\<any>_ | -        |
+| visible-length | 可视元素个数，必填                                  | _number_    | -        |
+| inner-height   | 播放栏高度，默认单位为 `px`，必填                        | _number_ \| _string_ | -        |
+| inner-width    | 播放栏宽度，默认单位为 `px`，必填                        | _number_ \| _string_ | -        |
+| span-gap       | 元素间距，默认单位 `px`                             | _number_ \| _string_      | `0`      |
+| side-gap       | 两边间距，默认单位 `px`                             | _number_ \| _string_      | `0`      |
+| auto-play      | 是否自动播放                                     | _boolean_   | `false`  |
+| play-delay      | 滑动停止后再播放时间间隔，单位 `ms`                       | _number_    | `2000`   |
+| play-immediate      | 组件渲染后是否立即自动播放，`auto-play` 为 `true` 时该属性才生效 | _boolean_   | `false`  |
+| slide-animation-duration      | 点击左右按钮后滑动动画时长，单位 `ms`                      | _number_    | `300`    |
 
 
 ### Methods

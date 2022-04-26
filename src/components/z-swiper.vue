@@ -393,6 +393,7 @@ export default {
 
   &__item {
     flex-shrink: 0;
+    overflow: hidden;
   }
 
   &__btn {
