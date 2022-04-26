@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "smoothly swiper",
   "scripts": {
-    "build": "za-build-vue"
+    "build": "node build.js"
   },
   "keywords": [
     "vue",
@@ -11,5 +11,8 @@
     "ZA"
   ],
   "author": "ZAFE",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "shelljs": "0.8.5"
+  }
 }

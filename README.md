@@ -5,6 +5,23 @@
 
 ![zswiper-function](./docs/assets/zswiper-function.png)
 
+## 安装及使用
+安装
+```shell
+npm i z-vue-swiper
+```
+
+TODO
+
+Vue2:
+```js
+// es module
+import ZVueSwiper from 'z-vue-swiper/z-vue-swiper.es.js'
+
+// umd
+import ZVueSwiper from 'z-vue-swiper/z-vue-swiper.umd.js'
+```
+
 ## 代码示例
 
 ```vue
