@@ -4,19 +4,20 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    fs: {
-      // Allow serving files from one level up to the project root
-      allow: ['..']
-    }
-  },
   plugins: [
     vue(),
   ],
+  server: {
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: [path.resolve(__dirname, '..')]
+    }
+  },
   resolve: {
     alias: {
       'common': path.resolve(__dirname, '../common'),
       'z-swiper': path.resolve(__dirname, '../packages/index.js'),
+      'lodash-es': path.resolve(__dirname, './node_modules/lodash-es')
     },
   },
   build: {

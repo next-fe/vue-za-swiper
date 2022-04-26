@@ -12,7 +12,7 @@
           :span-gap="16">
 
         <template #left>
-          <img src="common/assets/images/icon-triangle-left.png">
+          <img src="./assets/images/icon-triangle-left.png">
         </template>
 
         <template #default="{ item }">
@@ -22,7 +22,7 @@
         </template>
 
         <template #right>
-          <img src="common/assets/images/icon-triangle-right.png">
+          <img src="./assets/images/icon-triangle-right.png">
         </template>
 
       </z-swiper>
