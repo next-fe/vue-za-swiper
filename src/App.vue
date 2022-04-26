@@ -51,7 +51,6 @@ export default {
     }
   },
   async created() {
-    console.log('222');
     // get data from server
     this.list = await new Promise((resolve) => {
       setTimeout(() => {

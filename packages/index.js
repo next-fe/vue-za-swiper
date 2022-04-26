@@ -1,6 +1,3 @@
-import ZSwiper from '../src/components/z-swiper.vue';
-
-console.log(111);
-console.log(2222);
+import ZSwiper from '../src/components/z-swiper.vue'
 
 export default ZSwiper
