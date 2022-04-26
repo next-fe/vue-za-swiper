@@ -6,8 +6,8 @@
     }
   },
   "lint-staged": {
-    "**/*.{js,vue}": [
-      "npm run lint:fix"
+    "*.js": [
+      "eslint --cache --fix"
     ]
   },
   "scripts": {
@@ -26,9 +26,9 @@
     "eslint": "8.10.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "husky": "7.0.4",
     "sass": "1.50.1",
     "vite": "2.9.5",
+    "husky": "7.0.4",
     "vite-plugin-vue2": "2.0.0",
     "vue-eslint-parser": "^8.3.0",
     "vue-template-compiler": "2.6.14"

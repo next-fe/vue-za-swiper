@@ -12,6 +12,5 @@ module.exports = {
     'max-len': ['error', { code: 130 }],
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     semi: ['error', 'never'],
-    // semi: [0],
   },
 }

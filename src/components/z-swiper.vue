@@ -167,15 +167,15 @@ export default {
       this.doubleList = [...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid)]
     },
     initItemWidth() {
-      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth);
-      const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap);
+      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth)
+      const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap)
 
       if (innerWidthCssUnit !== spanGapCssUnit) {
         throw new Error('Please unite spanGap、innerWidth css unit')
       }
 
       const innerWidthValue = Utils.getCssValue(this.computedInnerWidth)
-      const spanGapValue = Utils.getCssValue(this.computedSpanGap);
+      const spanGapValue = Utils.getCssValue(this.computedSpanGap)
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
 
