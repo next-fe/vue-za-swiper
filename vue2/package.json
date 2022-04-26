@@ -1,5 +1,7 @@
 {
-  "private": true,
+  "name": "@za/z-vue-swiper",
+  "version": "1.0.0-beta.0",
+  "description": "smoothly swiper",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
