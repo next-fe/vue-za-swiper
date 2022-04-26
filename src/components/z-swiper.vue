@@ -142,7 +142,7 @@ export default {
   methods: {
     getObserveEntries() {
       return new Promise((resolve) => {
-        const observer = new window.IntersectionObserver((entries) => {
+        const observer = new IntersectionObserver((entries) => {
           observer.disconnect()
 
           resolve(entries)
@@ -179,11 +179,11 @@ export default {
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
 
-      this.itemWidth = itemWidthValue + innerWidthCssUnit
+      this.itemWidth = itemWidthValue + innerWidthCssUnit;
     },
     initItemFullWidth() {
-      const itemDom = this.$refs.swiperItems[0]
-      // clientWidth 算出来宽度的数会有一点偏差，用 window.getComputedStyle 最精确
+      const itemDom = this.$refs.swiperItems[0];
+      // clientWidth 算出来宽度的数会有一点偏差，用 getComputedStyle 最精确
       this.itemFullWidth = Utils.getDomPropertyValue(itemDom, 'width') + Utils.getDomPropertyValue(itemDom, 'margin-right')
     },
     initTranslateX() {
@@ -197,10 +197,10 @@ export default {
 
       const animationCallback = () => {
         this.setMove(this.step)
-        this.animationInterval = window.requestAnimationFrame(animationCallback)
+        this.animationInterval = requestAnimationFrame(animationCallback)
       }
 
-      this.animationInterval = window.requestAnimationFrame(animationCallback)
+      this.animationInterval = requestAnimationFrame(animationCallback)
     },
     replay() {
       clearTimeout(this.replayTimer)
@@ -288,7 +288,7 @@ export default {
       // 兼容某些安卓手机只触发一次 touchmove 的问题
       // https://blog.csdn.net/cdnight/article/details/50625391
       evt.preventDefault()
-      window.cancelAnimationFrame(this.animationInterval)
+      cancelAnimationFrame(this.animationInterval)
 
       const touch = evt.targetTouches[0]
 
@@ -339,7 +339,7 @@ export default {
 
     // 使用 throttle 避免用户快速连续点击导致动画出问题
     this.handleSlide = _.throttle((isLeft) => {
-      window.cancelAnimationFrame(this.animationInterval)
+      cancelAnimationFrame(this.animationInterval)
 
       Object.assign(this.$refs.swiperWrapper.style, {
         'transition-duration': `${this.slideAnimationDuration}ms`,
