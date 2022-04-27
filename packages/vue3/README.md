@@ -29,14 +29,14 @@ import ZVueSwiper from 'vue-z-swiper/vue-z-swiper.umd.js'
   <div class="demo-page">
     <div class="demo-page__swiper-box">
       <z-swiper
-        v-if="list.length"
-        auto-play
-        :list="list"
-        :visible-length="4"
-        :inner-height="55"
-        :inner-width="270"
-        :side-gap="16"
-        :span-gap="16">
+          v-if="list.length"
+          auto-play
+          :list="list"
+          :visible-length="4"
+          :inner-height="55"
+          :inner-width="270"
+          :side-gap="16"
+          :span-gap="16">
 
         <template #left>
           <img src="./assets/images/icon-triangle-left.png">

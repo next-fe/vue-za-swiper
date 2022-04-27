@@ -1,6 +1,6 @@
 const shell = require('shelljs')
 
-shell.cd('./vue2')
+shell.cd('./packages/vue2')
 shell.exec('npm run build', {
   async: true
 })
