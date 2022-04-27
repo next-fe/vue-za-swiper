@@ -9,25 +9,25 @@
 ### Vu3
 安装：
 ```shell
-npm i vue-za-swiper
+npm i @za/vue-za-swiper
 ```
 
 使用：
 ```js
-import '@za/vue-za-swiper/dist/style.css'
 import ZaSwiper from 'vue-za-swiper'
+import '@za/vue-za-swiper/dist/style.css'
 ```
 
 ### Vu2
 安装：
 ```shell
-npm i vue-za-swiper@1
+npm i @za/vue-za-swiper@1
 ```
 
 使用：
 ```js
-import '@za/vue-za-swiper/dist/style.css'
 import ZaSwiper from 'vue-za-swiper'
+import '@za/vue-za-swiper/dist/style.css'
 ```
 
 ## 代码示例
@@ -173,4 +173,5 @@ export default {
 | right | 右按钮  | -               |
 
 ## 相关资源
+- [vue-za-swiper 开发文档](./dev.md)
 - [vue-za-swiper 技术方案](https://note.youdao.com/)
