@@ -253,24 +253,25 @@ export default {
     },
     _slideNext() {
       this.getObserveEntries().then((entries) => {
-        const firstVisibleIndex = entries
-          .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+        const lastVisibleIndex = entries
+          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
         // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
 
         const isAllVisible = entries
           .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
 
-        const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex
+        const targetIndex = lastVisibleIndex + 1
         const target = entries[targetIndex]
 
-        const xDiff = target.boundingClientRect.left - target.rootBounds.left
+        const xDiff = isAllVisible ? this.itemFullWidthValue : this.itemWidthValue * (1 - target.intersectionRatio)
         this.translateX -= xDiff
         this.setDomTranslateX(this.translateX)
 
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs >= this.rightBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.list.length))
+            // 15 - 4 + 1 - 8 = 4
+            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.halfLen + 1 - this.list.length))
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
