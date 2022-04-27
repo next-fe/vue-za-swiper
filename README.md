@@ -147,10 +147,10 @@ export default {
 |--------------------------|--------------------------------------------|---------------|----------|
 | list                     | 数组，必填                                      | _Array\<any>_ | -        |
 | visible-length           | 可视元素个数，必填                                  | _number_      | -        |
-| inner-height             | 播放栏高度，默认单位为 `px`，必填                        | _number_ \    | _string_ | -        |
-| inner-width              | 播放栏宽度，默认单位为 `px`，必填                        | _number_ \    | _string_ | -        |
-| span-gap                 | 元素间距，默认单位 `px`                             | _number_ \    | _string_ | `0`      |
-| side-gap                 | 两边间距，默认单位 `px`                             | _number_ \    | _string_ | `0`      |
+| inner-height             | 播放栏高度，默认单位为 `px`，必填                        | _number_ \| _string_ | -        |
+| inner-width              | 播放栏宽度，默认单位为 `px`，必填                        | _number_ \| _string_ | -        |
+| span-gap                 | 元素间距，默认单位 `px`                             | _number_ \| _string_ | `0`      |
+| side-gap                 | 两边间距，默认单位 `px`                             | _number_ \| _string_ | `0`      |
 | auto-play                | 是否自动播放                                     | _boolean_     | `false`  |
 | step                     | 播放速度，一帧移动距离，单位 `px`                        | _number_      | `-0.5`   |
 | play-delay               | 滑动停止后再播放时间间隔，单位 `ms`                       | _number_      | `2000`   |
