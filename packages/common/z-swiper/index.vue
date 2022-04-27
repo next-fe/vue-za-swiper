@@ -59,19 +59,19 @@ export default {
       required: true,
     },
     innerHeight: {
-      type: [Number, String],
+      type: [ Number, String ],
       required: true,
     },
     innerWidth: {
-      type: [Number, String],
+      type: [ Number, String ],
       required: true,
     },
     spanGap: {
-      type: [Number, String],
+      type: [ Number, String ],
       default: 0,
     },
     sideGap: {
-      type: [Number, String],
+      type: [ Number, String ],
       default: 0,
     },
     visibleLength: {
@@ -104,8 +104,9 @@ export default {
       halfLen: 0,
       leftBorder: 0,
       rightBorder: 0,
-      itemWidth: 0,
-      itemFullWidth: 0,
+      itemWidth: '0',
+      itemWidthValue: 0,
+      itemFullWidthValue: 0,
       lastX: 0,
       intersectionRatioThreshold: 0.95,
       replayTimer: null,
@@ -116,20 +117,20 @@ export default {
   },
   computed: {
     computedInnerWidth() {
-      return _.isNumber(this.innerWidth) ? `${this.innerWidth}px` : this.innerWidth
+      return _.isNumber(this.innerWidth) ? `${ this.innerWidth }px` : this.innerWidth
     },
     computedInnerHeight() {
-      return _.isNumber(this.innerHeight) ? `${this.innerHeight}px` : this.innerHeight
+      return _.isNumber(this.innerHeight) ? `${ this.innerHeight }px` : this.innerHeight
     },
     computedSpanGap() {
-      return _.isNumber(this.spanGap) ? `${this.spanGap}px` : this.spanGap
+      return _.isNumber(this.spanGap) ? `${ this.spanGap }px` : this.spanGap
     },
     computedSideGap() {
-      return _.isNumber(this.sideGap) ? `${this.sideGap}px` : this.sideGap
+      return _.isNumber(this.sideGap) ? `${ this.sideGap }px` : this.sideGap
     },
     customBtnStyle() {
       return {
-        padding: `0 ${this.computedSideGap}`,
+        padding: `0 ${ this.computedSideGap }`,
       }
     },
     useLeft() {
@@ -159,12 +160,12 @@ export default {
       return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0])
     },
     setDomTranslateX(translateX) {
-      this.$refs.swiperWrapper.style.transform = `translateX(${translateX}px)`
+      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX }px)`
     },
     initDoubleList() {
       const mid = Math.floor((this.list.length / 2))
       this.halfLen = mid
-      this.doubleList = [...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid)]
+      this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
     },
     initItemWidth() {
       const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth)
@@ -179,15 +180,16 @@ export default {
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
 
+      this.itemWidthValue = itemWidthValue
       this.itemWidth = itemWidthValue + innerWidthCssUnit
     },
     initItemFullWidth() {
       const itemDom = this.$refs.swiperItems[0]
       // clientWidth 算出来宽度的数会有一点偏差，用 getComputedStyle 最精确
-      this.itemFullWidth = Utils.getDomPropertyValue(itemDom, 'width') + Utils.getDomPropertyValue(itemDom, 'margin-right')
+      this.itemFullWidthValue = Utils.getDomPropertyValue(itemDom, 'width') + Utils.getDomPropertyValue(itemDom, 'margin-right')
     },
     initTranslateX() {
-      const translateX = this.getDomTranslateX() - this.itemFullWidth * this.halfLen
+      const translateX = this.getDomTranslateX() - this.itemFullWidthValue * this.halfLen
       this.setDomTranslateX(translateX)
 
       return Math.abs(translateX)
@@ -227,23 +229,23 @@ export default {
     },
     _slidePrev() {
       this.getObserveEntries().then(((entries) => {
-        const lastVisibleIndex = entries
-          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+        const firstVisibleIndex = entries
+          .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
 
         const isAllVisible = entries
           .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
 
-        const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
+        const targetIndex = firstVisibleIndex - 1
         const target = entries[targetIndex]
 
-        const xDiff = target.rootBounds.right - target.boundingClientRect.right
+        const xDiff = isAllVisible ? this.itemFullWidthValue : this.itemWidthValue * (1 - target.intersectionRatio)
         this.translateX += xDiff
         this.setDomTranslateX(this.translateX)
 
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs <= this.leftBorder) {
-            this.translateX = -(this.itemFullWidth * (targetIndex - this.halfLen + 1 + this.list.length))
+            this.translateX = -(this.itemFullWidthValue * (targetIndex + this.list.length))
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
@@ -253,7 +255,7 @@ export default {
       this.getObserveEntries().then((entries) => {
         const firstVisibleIndex = entries
           .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
-          // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
+        // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
 
         const isAllVisible = entries
           .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
@@ -268,7 +270,7 @@ export default {
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs >= this.rightBorder) {
-            this.translateX = -(this.itemFullWidth * (targetIndex - this.list.length))
+            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.list.length))
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
@@ -326,7 +328,7 @@ export default {
     this.initItemFullWidth()
     const initialTranslateX = this.initTranslateX()
     this.leftBorder = initialTranslateX
-    this.rightBorder = this.itemFullWidth * this.list.length + initialTranslateX
+    this.rightBorder = this.itemFullWidthValue * this.list.length + initialTranslateX
 
     if (this.autoPlay) {
       if (this.playImmediate) {
@@ -342,7 +344,7 @@ export default {
       cancelAnimationFrame(this.animationInterval)
 
       Object.assign(this.$refs.swiperWrapper.style, {
-        'transition-duration': `${this.slideAnimationDuration}ms`,
+        'transition-duration': `${ this.slideAnimationDuration }ms`,
       })
 
       this.translateX = this.getDomTranslateX()
