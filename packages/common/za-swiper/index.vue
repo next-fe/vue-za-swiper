@@ -58,6 +58,10 @@ export default {
       type: Array,
       required: true,
     },
+    visibleLength: {
+      type: Number,
+      required: true,
+    },
     innerHeight: {
       type: [ Number, String ],
       required: true,
@@ -73,10 +77,6 @@ export default {
     sideGap: {
       type: [ Number, String ],
       default: 0,
-    },
-    visibleLength: {
-      type: Number,
-      required: true,
     },
     autoPlay: {
       type: Boolean,
