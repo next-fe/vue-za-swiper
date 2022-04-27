@@ -33,8 +33,8 @@ export default defineConfig({
     },
     lib: {
       entry: '../packages/index.js',
-      fileName: 'z-vue-swiper',
-      name: 'z-vue-swiper',
+      fileName: 'index',
+      name: 'z-index',
     },
   },
 })

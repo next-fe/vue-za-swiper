@@ -8,7 +8,7 @@
 ## 安装及使用
 安装
 ```shell
-npm i z-vue-swiper
+npm i vue-z-swiper
 ```
 
 TODO
@@ -16,10 +16,10 @@ TODO
 Vue2:
 ```js
 // es module
-import ZVueSwiper from 'z-vue-swiper/z-vue-swiper.es.js'
+import ZVueSwiper from 'vue-z-swiper/vue-z-swiper.es.js'
 
 // umd
-import ZVueSwiper from 'z-vue-swiper/z-vue-swiper.umd.js'
+import ZVueSwiper from 'vue-z-swiper/vue-z-swiper.umd.js'
 ```
 
 ## 代码示例

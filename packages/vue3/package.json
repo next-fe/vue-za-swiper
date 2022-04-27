@@ -1,7 +1,9 @@
 {
-  "name": "@za/z-vue-swiper",
-  "version": "1.0.0",
+  "name": "@za/vue-z-swiper",
+  "version": "2.0.0-beta.0",
   "description": "smoothly swiper",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
