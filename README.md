@@ -1,33 +1,33 @@
-# vue-z-swiper
+# vue-za-swiper
 ![demo-gif](https://gitee.com/yejinzhan/images/raw/master/img/demo.gif)
 
 ## 概述
 
-![vue-z-swiper-function](https://gitee.com/yejinzhan/images/raw/master/img/zswiper-function.png)
+![vue-za-swiper-function](https://gitee.com/yejinzhan/images/raw/master/img/zswiper-function.png)
 
 ## 安装及使用
 ### Vu3
 安装：
 ```shell
-npm i vue-z-swiper
+npm i vue-za-swiper
 ```
 
 使用：
 ```js
-import ZVueSwiper from 'vue-z-swiper'
-import '@za/vue-z-swiper/dist/style.css'
+import ZVueSwiper from 'vue-za-swiper'
+import '@za/vue-za-swiper/dist/style.css'
 ```
 
 ### Vu2
 安装：
 ```shell
-npm i vue-z-swiper@1
+npm i vue-za-swiper@1
 ```
 
 使用：
 ```js
-import ZVueSwiper from 'vue-z-swiper'
-import '@za/vue-z-swiper/dist/style.css'
+import ZVueSwiper from 'vue-za-swiper'
+import '@za/vue-za-swiper/dist/style.css'
 ```
 
 ## 代码示例

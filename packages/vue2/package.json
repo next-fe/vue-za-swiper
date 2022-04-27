@@ -1,5 +1,5 @@
 {
-  "name": "@za/vue-z-swiper",
+  "name": "@za/vue-za-swiper",
   "version": "1.0.0-beta.0",
   "description": "smoothly swiper",
   "main": "dist/index.umd.js",
