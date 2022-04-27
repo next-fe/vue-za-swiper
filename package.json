@@ -2,6 +2,9 @@
   "name": "@za/z-vue-swiper",
   "version": "1.0.0",
   "description": "smoothly swiper",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "node build.js"
   },

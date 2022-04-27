@@ -16,18 +16,18 @@
       <div class="z-swiper__list"
            ref="swiperWrapper"
            :style="{
-               width: computedInnerWidth,
-               height: computedInnerHeight,
-               transform: 'translateX(0px)'
-             }">
+             width: computedInnerWidth,
+             height: computedInnerHeight,
+             transform: 'translateX(0px)'
+           }">
         <div
           class="z-swiper__item"
           ref="swiperItems"
           :style="{
-                       marginRight: computedSpanGap,
-                       width: itemWidth,
-                       height: '100%',
-                    }"
+             marginRight: computedSpanGap,
+             width: itemWidth,
+             height: '100%',
+          }"
           v-for="(item, index) in doubleList"
           :data-index="index"
           :key="index">
@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import _ from 'common/utils/lodash'
-import Utils from 'common/utils'
+import _ from '../utils/lodash'
+import Utils from '../utils'
 
 export default {
   name: 'z-swiper',
@@ -370,7 +370,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'common/assets/styles/common';
+@import '../assets/styles/common';
 
 .z-swiper {
   position: relative;

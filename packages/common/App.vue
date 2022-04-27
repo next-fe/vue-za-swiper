@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import ZSwiper from 'z-swiper'
+import ZSwiper from './z-swiper/index'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
 import IMG3 from './assets/images/model/3.png'
