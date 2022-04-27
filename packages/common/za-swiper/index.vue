@@ -1,19 +1,19 @@
 <template>
-  <div class="z-swiper">
-    <div class="z-swiper__btn"
+  <div class="za-swiper">
+    <div class="za-swiper__btn"
          v-if="useLeft"
          @click="slidePrev"
          :style="customBtnStyle">
       <slot name="left"/>
     </div>
 
-    <div class="z-swiper__list-wrapper"
+    <div class="za-swiper__list-wrapper"
          ref="swiperBody"
          @touchstart="touchstart"
          @touchmove="touchmove"
          @touchend="touchend"
          @touchcancel="touchcancel">
-      <div class="z-swiper__list"
+      <div class="za-swiper__list"
            ref="swiperWrapper"
            :style="{
              width: computedInnerWidth,
@@ -21,7 +21,7 @@
              transform: 'translateX(0px)'
            }">
         <div
-          class="z-swiper__item"
+          class="za-swiper__item"
           ref="swiperItems"
           :style="{
              marginRight: computedSpanGap,
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="z-swiper__btn"
+    <div class="za-swiper__btn"
          v-if="useRight"
          @click="slideNext"
          :style="customBtnStyle">
@@ -52,7 +52,7 @@ import _ from '../utils/lodash'
 import Utils from '../utils'
 
 export default {
-  name: 'z-swiper',
+  name: 'za-swiper',
   props: {
     list: {
       type: Array,
@@ -377,7 +377,7 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/styles/common';
 
-.z-swiper {
+.za-swiper {
   position: relative;
   user-select: none;
   @include flex-center(row, null, null);

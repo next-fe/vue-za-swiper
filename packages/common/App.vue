@@ -1,7 +1,7 @@
 <template>
   <div class="demo-page">
     <div class="demo-page__swiper-box">
-      <z-swiper
+      <za-swiper
           v-if="list.length"
           auto-play
           :list="list"
@@ -25,13 +25,13 @@
           <img src="./assets/images/icon-triangle-right.png">
         </template>
 
-      </z-swiper>
+      </za-swiper>
     </div>
   </div>
 </template>
 
 <script>
-import ZSwiper from './z-swiper/index'
+import ZaSwiper from './za-swiper/index'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
 import IMG3 from './assets/images/model/3.png'
@@ -43,7 +43,7 @@ import IMG8 from './assets/images/model/8.png'
 
 export default {
   components: {
-    ZSwiper,
+    ZaSwiper,
   },
   data() {
     return {

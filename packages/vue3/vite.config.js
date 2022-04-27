@@ -31,7 +31,7 @@ export default defineConfig({
       },
     },
     lib: {
-      entry: '../common/z-swiper/index.js',
+      entry: '../common/za-swiper/index.js',
       fileName: 'index',
       name: 'z-index',
     },

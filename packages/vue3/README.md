@@ -1,9 +1,9 @@
 # vue-za-swiper
-![demo-gif](https://gitee.com/yejinzhan/images/raw/master/img/demo.gif)
+![demo](./docs/assets/demo.gif)
 
 ## 概述
 
-![vue-za-swiper-function](https://gitee.com/yejinzhan/images/raw/master/img/zswiper-function.png)
+![vue-za-swiper-function](./docs/assets/vue-za-swiper-function.png)
 
 ## 安装及使用
 ### Vu3
@@ -66,7 +66,7 @@ import '@za/vue-za-swiper/dist/style.css'
 </template>
 
 <script>
-import ZSwiper from './components/z-swiper.vue'
+import ZASwiper from './components/za-swiper.vue'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
 import IMG3 from './assets/images/model/3.png'
@@ -78,7 +78,7 @@ import IMG8 from './assets/images/model/8.png'
 
 export default {
   components: {
-    ZSwiper,
+    ZASwiper,
   },
   data() {
     return {

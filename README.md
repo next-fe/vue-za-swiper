@@ -1,9 +1,9 @@
 # vue-za-swiper
-![demo-gif](https://gitee.com/yejinzhan/images/raw/master/img/demo.gif)
+![demo](./docs/assets/demo.gif)
 
 ## 概述
 
-![vue-za-swiper-function](https://gitee.com/yejinzhan/images/raw/master/img/zswiper-function.png)
+![vue-za-swiper-function](./docs/assets/vue-za-swiper-function.png)
 
 ## 安装及使用
 ### Vu3
@@ -36,7 +36,7 @@ import '@za/vue-za-swiper/dist/style.css'
 <template>
   <div class="demo-page">
     <div class="demo-page__swiper-box">
-      <z-swiper
+      <za-swiper
         v-if="list.length"
         auto-play
         :list="list"
@@ -60,13 +60,13 @@ import '@za/vue-za-swiper/dist/style.css'
           <img src="./assets/images/icon-triangle-right.png">
         </template>
 
-      </z-swiper>
+      </za-swiper>
     </div>
   </div>
 </template>
 
 <script>
-import ZSwiper from './components/z-swiper.vue'
+import ZaSwiper from './za-swiper/index'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
 import IMG3 from './assets/images/model/3.png'
@@ -78,7 +78,7 @@ import IMG8 from './assets/images/model/8.png'
 
 export default {
   components: {
-    ZSwiper,
+    ZaSwiper,
   },
   data() {
     return {
@@ -99,15 +99,15 @@ export default {
           IMG7,
           IMG8,
         ])
-      }, 100);
+      }, 100)
     })
-  }
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .demo-page {
-  background: center/cover url("./assets/images/main-bg.jpeg");
+  background: center/cover url("common/assets/images/main-bg.jpeg");
   width: 100vw;
   height: 100vh;
 
@@ -135,7 +135,6 @@ export default {
   }
 }
 </style>
-
 ```
 
 ## API
