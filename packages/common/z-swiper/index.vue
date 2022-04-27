@@ -2,7 +2,7 @@
   <div class="z-swiper">
     <div class="z-swiper__btn"
          v-if="useLeft"
-         @click="slideLeft"
+         @click="slidePrev"
          :style="customBtnStyle">
       <slot name="left"/>
     </div>
@@ -40,7 +40,7 @@
 
     <div class="z-swiper__btn"
          v-if="useRight"
-         @click="slideRight"
+         @click="slideNext"
          :style="customBtnStyle">
       <slot name="right"/>
     </div>
@@ -225,7 +225,31 @@ export default {
 
       this.setDomTranslateX(this.translateX)
     },
-    _slideLeft() {
+    _slidePrev() {
+      this.getObserveEntries().then(((entries) => {
+        const lastVisibleIndex = entries
+          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+
+        const isAllVisible = entries
+          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
+
+        const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
+        const target = entries[targetIndex]
+
+        const xDiff = target.rootBounds.right - target.boundingClientRect.right
+        this.translateX += xDiff
+        this.setDomTranslateX(this.translateX)
+
+        const translateXAbs = Math.abs(this.translateX)
+        setTimeout(() => {
+          if (translateXAbs <= this.leftBorder) {
+            this.translateX = -(this.itemFullWidth * (targetIndex - this.halfLen + 1 + this.list.length))
+            this.setDomTranslateX(this.translateX)
+          }
+        }, this.slideAnimationDuration)
+      }))
+    },
+    _slideNext() {
       this.getObserveEntries().then((entries) => {
         const firstVisibleIndex = entries
           .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
@@ -250,37 +274,13 @@ export default {
         }, this.slideAnimationDuration)
       })
     },
-    _slideRight() {
-      this.getObserveEntries().then(((entries) => {
-        const lastVisibleIndex = entries
-          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
-
-        const isAllVisible = entries
-          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
-
-        const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
-        const target = entries[targetIndex]
-
-        const xDiff = target.rootBounds.right - target.boundingClientRect.right
-        this.translateX += xDiff
-        this.setDomTranslateX(this.translateX)
-
-        const translateXAbs = Math.abs(this.translateX)
-        setTimeout(() => {
-          if (translateXAbs <= this.leftBorder) {
-            this.translateX = -(this.itemFullWidth * (targetIndex - this.halfLen + 1 + this.list.length))
-            this.setDomTranslateX(this.translateX)
-          }
-        }, this.slideAnimationDuration)
-      }))
-    },
     /*
      * event handle
      */
-    slideLeft() {
+    slidePrev() {
       this.handleSlide(true)
     },
-    slideRight() {
+    slideNext() {
       this.handleSlide()
     },
     touchstart(evt) {
@@ -338,7 +338,7 @@ export default {
     }
 
     // 使用 throttle 避免用户快速连续点击导致动画出问题
-    this.handleSlide = _.throttle((isLeft) => {
+    this.handleSlide = _.throttle((isPrev) => {
       cancelAnimationFrame(this.animationInterval)
 
       Object.assign(this.$refs.swiperWrapper.style, {
@@ -347,10 +347,10 @@ export default {
 
       this.translateX = this.getDomTranslateX()
 
-      if (isLeft) {
-        this._slideLeft()
+      if (isPrev) {
+        this._slidePrev()
       } else {
-        this._slideRight()
+        this._slideNext()
       }
 
       setTimeout(() => {
@@ -362,7 +362,7 @@ export default {
           this.replay()
         }
       }, this.slideAnimationDuration)
-    }, this.slideAnimationDuration + 300, {
+    }, this.slideAnimationDuration + 200, {
       trailing: false,
     })
   },
