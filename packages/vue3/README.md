@@ -6,20 +6,28 @@
 ![vue-z-swiper-function](https://gitee.com/yejinzhan/images/raw/master/img/zswiper-function.png)
 
 ## 安装及使用
-安装
+### Vu3
+安装：
 ```shell
 npm i vue-z-swiper
 ```
 
-TODO
-
-Vue2:
+使用：
 ```js
-// es module
-import ZVueSwiper from 'vue-z-swiper/vue-z-swiper.es.js'
+import ZVueSwiper from 'vue-z-swiper'
+import '@za/vue-z-swiper/dist/style.css'
+```
 
-// umd
-import ZVueSwiper from 'vue-z-swiper/vue-z-swiper.umd.js'
+### Vu2
+安装：
+```shell
+npm i vue-z-swiper@1
+```
+
+使用：
+```js
+import ZVueSwiper from 'vue-z-swiper'
+import '@za/vue-z-swiper/dist/style.css'
 ```
 
 ## 代码示例
