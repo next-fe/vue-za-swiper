@@ -1,9 +1,9 @@
 # vue-z-swiper
-![demo-gif](./docs/assets/demo.gif)
+![demo-gif](https://gitee.com/yejinzhan/images/raw/master/img/demo.gif)
 
 ## 概述
 
-![zswiper-function](./docs/assets/zswiper-function.png)
+![vue-z-swiper-function](https://gitee.com/yejinzhan/images/raw/master/img/zswiper-function.png)
 
 ## 安装及使用
 安装
@@ -152,8 +152,8 @@ export default {
 ### Methods
 | 名称           | 说明                         | 参数 |  返回值 |
 |--------------|----------------------------|--|-----------------------|
-| slideLeft   | 向左滑动 | - | - |
-| slideRight |  向右滑动  | - | - |
+| slidePrev   | 滑动至上一个元素 | - | - |
+| slideNext |  滑动至下一个元素  | - | - |
 
 ### Slots
 

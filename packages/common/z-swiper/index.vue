@@ -270,7 +270,9 @@ export default {
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs >= this.rightBorder) {
-            // 15 - 4 + 1 - 8 = 4
+            // targetIndex: 15
+            // halfLen: 4
+            // 15 - 4 + 1 = 4
             this.translateX = -(this.itemFullWidthValue * (targetIndex - this.halfLen + 1 - this.list.length))
             this.setDomTranslateX(this.translateX)
           }
