@@ -5,7 +5,7 @@
 最近在做业务的时候，产品同学提了这样一个需求：
 ![vue-za-swiper-function.png](../assets/vue-za-swiper-function.png)
 
-找了一遍开源没有合适的，于是决定自己写一个。大体思路主要参考 [Swiper](https://swiperjs.com)，监听 `touchmove` 事件，动态改变 `translateX` 实现滑动，在滑动到达边界的时候设置特定的 `translateX` 制造循环滑动效果。阅读文章时可以结合 [仓库代码](http://gitlab.zhenai.com/webapp/common/zanpm/za-vue-components/vue-za-swiper) 一起阅读。
+找了一遍开源没有合适的，于是决定自己写一个。大体思路主要参考 [Swiper](https://swiperjs.com)，监听 `touchmove` 事件，动态改变 `translateX` 实现滑动，在滑动到达边界的时候设置特定的 `translateX` 制造循环滑动效果。本文主要介绍手势滑动和按钮滑动的技术方案，阅读文章时可以结合 [仓库代码](http://gitlab.zhenai.com/webapp/common/zanpm/za-vue-components/vue-za-swiper) 一起阅读。
 
 ![img.png](../assets/img.png)
 
@@ -188,3 +188,5 @@ if (translateXAbs >= this.rightBorder) {
 }
 ```
 ![img_9.png](../assets/img_9.png)
+
+完。
