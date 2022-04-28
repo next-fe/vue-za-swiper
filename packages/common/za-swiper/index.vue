@@ -160,7 +160,8 @@ export default {
       return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0])
     },
     setDomTranslateX(translateX) {
-      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX }px)`
+      console.log(translateX.toFixed(2))
+      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX.toFixed(2) }px)`
     },
     initDoubleList() {
       const mid = Math.floor((this.list.length / 2))
@@ -179,14 +180,13 @@ export default {
       const spanGapValue = Utils.getCssValue(this.computedSpanGap)
 
       const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
-
-      this.itemWidthValue = itemWidthValue
       this.itemWidth = itemWidthValue + innerWidthCssUnit
     },
-    initItemFullWidth() {
+    initItemWidthValue() {
       const itemDom = this.$refs.swiperItems[0]
       // clientWidth 算出来宽度的数会有一点偏差，用 getComputedStyle 最精确
-      this.itemFullWidthValue = Utils.getDomPropertyValue(itemDom, 'width') + Utils.getDomPropertyValue(itemDom, 'margin-right')
+      this.itemWidthValue = Utils.getDomPropertyValue(itemDom, 'width');
+      this.itemFullWidthValue =  this.itemWidthValue + Utils.getDomPropertyValue(itemDom, 'margin-right')
     },
     initTranslateX() {
       const translateX = this.getDomTranslateX() - this.itemFullWidthValue * this.halfLen
@@ -229,23 +229,23 @@ export default {
     },
     _slidePrev() {
       this.getObserveEntries().then(((entries) => {
-        const firstVisibleIndex = entries
-          .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+        const lastVisibleIndex = entries
+          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
 
         const isAllVisible = entries
           .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
 
-        const targetIndex = firstVisibleIndex - 1
+        const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
         const target = entries[targetIndex]
 
-        const xDiff = isAllVisible ? this.itemFullWidthValue : this.itemWidthValue * (1 - target.intersectionRatio)
+        const xDiff = target.rootBounds.right - target.boundingClientRect.right
         this.translateX += xDiff
         this.setDomTranslateX(this.translateX)
 
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs <= this.leftBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex + this.list.length))
+            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.halfLen + 1 + this.list.length))
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
@@ -253,27 +253,24 @@ export default {
     },
     _slideNext() {
       this.getObserveEntries().then((entries) => {
-        const lastVisibleIndex = entries
-          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+        const firstVisibleIndex = entries
+          .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
         // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
 
         const isAllVisible = entries
           .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
 
-        const targetIndex = lastVisibleIndex + 1
+        const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex
         const target = entries[targetIndex]
 
-        const xDiff = isAllVisible ? this.itemFullWidthValue : this.itemWidthValue * (1 - target.intersectionRatio)
+        const xDiff = target.boundingClientRect.left - target.rootBounds.left
         this.translateX -= xDiff
         this.setDomTranslateX(this.translateX)
 
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs >= this.rightBorder) {
-            // targetIndex: 15
-            // halfLen: 4
-            // 15 - 4 + 1 = 4
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.halfLen + 1 - this.list.length))
+            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.list.length))
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
@@ -328,7 +325,7 @@ export default {
     this.initDoubleList()
   },
   mounted() {
-    this.initItemFullWidth()
+    this.initItemWidthValue()
     const initialTranslateX = this.initTranslateX()
     this.leftBorder = initialTranslateX
     this.rightBorder = this.itemFullWidthValue * this.list.length + initialTranslateX
