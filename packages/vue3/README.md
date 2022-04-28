@@ -9,25 +9,25 @@
 ### Vu3
 安装：
 ```shell
-npm i @za/vue-za-swiper
+npm i @next-fe/vue-za-swiper
 ```
 
 使用：
 ```js
-import ZaSwiper from '@za/vue-za-swiper'
-import '@za/vue-za-swiper/dist/style.css'
+import ZaSwiper from '@next-fe/vue-za-swiper'
+import '@next-fe/vue-za-swiper/dist/style.css'
 ```
 
 ### Vu2
 安装：
 ```shell
-npm i @za/vue-za-swiper@1
+npm i @next-fe/vue-za-swiper@1
 ```
 
 使用：
 ```js
-import ZaSwiper from '@za/vue-za-swiper'
-import '@za/vue-za-swiper/dist/style.css'
+import ZaSwiper from '@next-fe/vue-za-swiper'
+import '@next-fe/vue-za-swiper/dist/style.css'
 ```
 
 ## 代码示例
@@ -66,7 +66,7 @@ import '@za/vue-za-swiper/dist/style.css'
 </template>
 
 <script>
-import '@za/vue-za-swiper/dist/style.css'
+import '@next-fe/vue-za-swiper/dist/style.css'
 import ZaSwiper from 'vue-za-swiper'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
@@ -143,19 +143,19 @@ export default {
 ### Props
 该组件所有属性均为非响应式属性，所以开发者需要保证数组加载完成才渲染组件，不然可能会有异常。
 
-| 参数                       | 说明                                         | 类型            | 默认值      |
-|--------------------------|--------------------------------------------|---------------|----------|
-| list                     | 数组，必填                                      | _Array\<any>_ | -        |
-| visible-length           | 可视元素个数，必填                                  | _number_      | -        |
-| inner-height             | 播放栏高度，默认单位为 `px`，必填                        | _number_ \| _string_ | -        |
-| inner-width              | 播放栏宽度，默认单位为 `px`，必填                        | _number_ \| _string_ | -        |
-| span-gap                 | 元素间距，默认单位 `px`                             | _number_ \| _string_ | `0`      |
-| side-gap                 | 两边间距，默认单位 `px`                             | _number_ \| _string_ | `0`      |
-| auto-play                | 是否自动播放                                     | _boolean_     | `false`  |
-| step                     | 播放速度，一帧移动距离，单位 `px`                        | _number_      | `-0.5`   |
-| play-delay               | 滑动停止后再播放时间间隔，单位 `ms`                       | _number_      | `2000`   |
-| play-immediate           | 组件渲染后是否立即自动播放，`auto-play` 为 `true` 时该属性才生效 | _boolean_     | `false`  |
-| slide-animation-duration | 点击左右按钮后滑动动画时长，单位 `ms`                      | _number_      | `300`    |
+| 参数                       | 说明                                         | 类型                  | 默认值      |
+|--------------------------|--------------------------------------------|---------------------|----------|
+| list                     | 数组，必填                                      | _Array\<any>_       | -        |
+| visible-length           | 可视元素个数，必填                                  | _number_            | -        |
+| inner-height             | 播放栏高度，默认单位为 `px`，必填                        | _number_ / _string_ | -        |
+| inner-width              | 播放栏宽度，默认单位为 `px`，必填                        | _number_ / _string_ | -        |
+| span-gap                 | 元素间距，默认单位 `px`                             | _number_ / _string_ | `0`      |
+| side-gap                 | 两边间距，默认单位 `px`                             | _number_ / _string_ | `0`      |
+| auto-play                | 是否自动播放                                     | _boolean_           | `false`  |
+| step                     | 播放速度，一帧移动距离，单位 `px`                        | _number_            | `-0.5`   |
+| play-delay               | 滑动停止后再播放时间间隔，单位 `ms`                       | _number_            | `2000`   |
+| play-immediate           | 组件渲染后是否立即自动播放，`auto-play` 为 `true` 时该属性才生效 | _boolean_           | `false`  |
+| slide-animation-duration | 点击左右按钮后滑动动画时长，单位 `ms`                      | _number_            | `300`    |
 
 
 ### Methods
