@@ -47,6 +47,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://gitlab.zhenai.com/webapp/common/zanpm/za-vue-components/vue-za-swiper"
+    "url": "https://github.com/next-fe/vue-za-swiper"
   }
 }
