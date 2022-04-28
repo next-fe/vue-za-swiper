@@ -173,4 +173,5 @@ export default {
 | right | 右按钮  | -               |
 
 ## 相关资源
-- [vue-za-swiper 技术方案](https://note.youdao.com/)
+- [vue-za-swiper 开发文档](./dev.md)
+- [vue-za-swiper 技术方案](./docs/technical-solution/index.md)
