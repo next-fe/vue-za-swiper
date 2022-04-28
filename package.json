@@ -17,5 +17,9 @@
   "license": "MIT",
   "devDependencies": {
     "shelljs": "0.8.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.zhenai.com/webapp/common/zanpm/za-vue-components/vue-za-swiper"
   }
 }
