@@ -1,4 +1,5 @@
-# vue-z-swiper 技术方案
+# [vue-za-swiper](https://github.com/next-fe/vue-za-swiper) 技术方案
+
 ![img_26.png](../assets/img_26.png)
 
 ## 前言
@@ -190,3 +191,7 @@ if (translateXAbs >= this.rightBorder) {
 ![img_9.png](../assets/img_9.png)
 
 完。
+
+## 相关链接
+- [vue-za-swiper 仓库](https://github.com/next-fe/vue-za-swiper)
+- [Swiper 官网](https://swiperjs.com)
