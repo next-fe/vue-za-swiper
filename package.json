@@ -1,5 +1,5 @@
 {
-  "name": "@za/vue-za-swiper",
+  "name": "@next-fe/vue-za-swiper",
   "version": "2.0.0-beta.0",
   "description": "smoothly swiper",
   "workspaces": [
