@@ -160,8 +160,7 @@ export default {
       return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0])
     },
     setDomTranslateX(translateX) {
-      console.log(translateX.toFixed(2))
-      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX.toFixed(2) }px)`
+      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX }px)`
     },
     initDoubleList() {
       const mid = Math.floor((this.list.length / 2))
