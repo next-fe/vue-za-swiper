@@ -14,7 +14,7 @@ npm i @za/vue-za-swiper
 
 使用：
 ```js
-import ZaSwiper from 'vue-za-swiper'
+import ZaSwiper from '@za/vue-za-swiper'
 import '@za/vue-za-swiper/dist/style.css'
 ```
 
@@ -26,7 +26,7 @@ npm i @za/vue-za-swiper@1
 
 使用：
 ```js
-import ZaSwiper from 'vue-za-swiper'
+import ZaSwiper from '@za/vue-za-swiper'
 import '@za/vue-za-swiper/dist/style.css'
 ```
 

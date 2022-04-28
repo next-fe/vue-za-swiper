@@ -31,6 +31,9 @@
 </template>
 
 <script>
+// 测试用
+// import ZaSwiper from '@za/vue-za-swiper'
+// import '@za/vue-za-swiper/dist/style.css'
 import ZaSwiper from './za-swiper/index'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
