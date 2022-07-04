@@ -1,4 +1,4 @@
-import { openBlock, createElementBlock, normalizeStyle, renderSlot, createCommentVNode, createElementVNode, Fragment, renderList } from "vue";
+import { openBlock, createElementBlock, normalizeClass, normalizeStyle, renderSlot, createCommentVNode, createElementVNode, Fragment, renderList } from "vue";
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 var FUNC_ERROR_TEXT = "Expected a function";
 var NAN = 0 / 0;
@@ -169,16 +169,24 @@ var _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const itemWidthModeEnum = {
+const itemSizeModeEnum = {
   COMPUTED: "computed",
   CUSTOM: "custom"
+};
+const directionEnum = {
+  VERTICAL: "vertical",
+  HORIZONTAL: "horizontal"
 };
 const _sfc_main = {
   name: "za-swiper",
   props: {
-    itemWidthMode: {
+    direction: {
       type: String,
-      default: itemWidthModeEnum.COMPUTED
+      default: directionEnum.HORIZONTAL
+    },
+    itemSizeMode: {
+      type: String,
+      default: itemSizeModeEnum.COMPUTED
     },
     list: {
       type: Array,
@@ -234,9 +242,9 @@ const _sfc_main = {
       leftBorder: 0,
       rightBorder: 0,
       itemWidth: "auto",
-      itemWidthValue: 0,
-      itemFullWidthValue: 0,
-      lastX: 0,
+      itemHeight: "auto",
+      itemFullDirectionLengthValue: 0,
+      lastOffset: 0,
       intersectionRatioThreshold: 0.95,
       replayTimer: null,
       animationInterval: null,
@@ -262,6 +270,27 @@ const _sfc_main = {
         padding: `0 ${this.computedSideGap}`
       };
     },
+    containerClasses() {
+      const result = ["za-swiper"];
+      if (this.direction === directionEnum.VERTICAL) {
+        result.push("za-swiper--vertical");
+      }
+      return result;
+    },
+    swiperItemStyle() {
+      const result = {
+        width: this.itemWidth,
+        height: this.itemHeight,
+        marginRight: 0,
+        marginBottom: 0
+      };
+      if (this.direction === directionEnum.HORIZONTAL) {
+        result.marginRight = this.computedSpanGap;
+      } else {
+        result.marginBottom = this.computedSpanGap;
+      }
+      return result;
+    },
     useLeft() {
       return this.$slots.left;
     },
@@ -283,40 +312,60 @@ const _sfc_main = {
         });
       });
     },
-    getDomTranslateX() {
-      return Number(this.$refs.swiperWrapper.style.transform.split("(")[1].split("px")[0]);
+    getDomDirectionTranslate() {
+      const [, translateX, translateY] = /translate\(([^p]+)px, ([^p]+)px\)/.exec(this.$refs.swiperWrapper.style.transform);
+      return Number(this.direction === directionEnum.HORIZONTAL ? translateX : translateY);
     },
-    setDomTranslateX(translateX) {
-      this.$refs.swiperWrapper.style.transform = `translateX(${translateX}px)`;
+    setDomDirectionTranslate(value) {
+      let translateX = 0;
+      let translateY = 0;
+      if (this.direction === directionEnum.HORIZONTAL) {
+        translateX = value;
+      } else {
+        translateY = value;
+      }
+      this.$refs.swiperWrapper.style.transform = `translate(${translateX}px, ${translateY}px)`;
     },
     initDoubleList() {
       const mid = Math.floor(this.list.length / 2);
       this.doubleList = [...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid)];
       this.listDiv = this.list.length - mid;
     },
-    initItemWidth() {
-      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth);
+    initItemCss() {
+      const innerLengthCssUnit = Utils.getCssUnit(this.computedInnerWidth);
       const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap);
-      if (innerWidthCssUnit !== spanGapCssUnit) {
+      if (innerLengthCssUnit !== spanGapCssUnit) {
         throw new Error("Please unite spanGap\u3001innerWidth css unit");
       }
-      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth);
+      const computedDirectionCss = this.direction === directionEnum.HORIZONTAL ? this.computedInnerWidth : this.computedInnerHeight;
+      const innerDirectionCssValue = Utils.getCssValue(computedDirectionCss);
       const spanGapValue = Utils.getCssValue(this.computedSpanGap);
-      const itemWidthValue = (innerWidthValue - spanGapValue * (this.visibleLength - 1)) / this.visibleLength;
-      this.itemWidth = itemWidthValue + innerWidthCssUnit;
+      const itemDirectionValue = (innerDirectionCssValue - spanGapValue * (this.visibleLength - 1)) / this.visibleLength;
+      if (this.direction === directionEnum.HORIZONTAL) {
+        this.itemWidth = itemDirectionValue + innerLengthCssUnit;
+        this.itemHeight = "100%";
+      } else {
+        this.itemWidth = "100%";
+        this.itemHeight = itemDirectionValue + innerLengthCssUnit;
+      }
     },
-    initItemWidthValue() {
+    initItemRenderedValue() {
       const itemDom = this.$refs.swiperItems[0];
-      this.itemWidthValue = Utils.getDomPropertyValue(itemDom, "width");
-      this.itemFullWidthValue = this.itemWidthValue + Utils.getDomPropertyValue(itemDom, "margin-right");
+      let lengthCssProperty = "width";
+      let gapCssProperty = "margin-right";
+      if (this.direction === directionEnum.VERTICAL) {
+        lengthCssProperty = "height";
+        gapCssProperty = "margin-bottom";
+      }
+      this.itemFullDirectionLengthValue = Utils.getDomPropertyValue(itemDom, lengthCssProperty) + Utils.getDomPropertyValue(itemDom, gapCssProperty);
     },
-    initTranslateX() {
-      const translateX = this.getDomTranslateX() - this.itemFullWidthValue * this.listDiv;
-      this.setDomTranslateX(translateX);
-      return Math.abs(translateX);
+    initTranslate() {
+      const translate = this.getDomDirectionTranslate() - this.itemFullDirectionLengthValue * this.listDiv;
+      this.setDomDirectionTranslate(translate);
+      return Math.abs(translate);
     },
     play() {
-      this.translateX = this.getDomTranslateX();
+      this.translate = this.getDomDirectionTranslate();
       const animationCallback = () => {
         this.setMove(this.step);
         this.animationInterval = requestAnimationFrame(animationCallback);
@@ -332,15 +381,15 @@ const _sfc_main = {
         this.play();
       }, this.playDelay);
     },
-    setMove(xDiff) {
-      this.translateX += xDiff;
-      const translateXAbs = Math.abs(this.translateX);
-      if (translateXAbs >= this.rightBorder) {
-        this.translateX = -(this.leftBorder + (translateXAbs - this.rightBorder));
-      } else if (translateXAbs <= this.leftBorder) {
-        this.translateX = -(this.rightBorder - (this.leftBorder - translateXAbs));
+    setMove(diff) {
+      this.translate += diff;
+      const translateAbs = Math.abs(this.translate);
+      if (translateAbs >= this.rightBorder) {
+        this.translate = -(this.leftBorder + (translateAbs - this.rightBorder));
+      } else if (translateAbs <= this.leftBorder) {
+        this.translate = -(this.rightBorder - (this.leftBorder - translateAbs));
       }
-      this.setDomTranslateX(this.translateX);
+      this.setDomDirectionTranslate(this.translate);
     },
     _slidePrev() {
       this.getObserveEntries().then((entries) => {
@@ -348,14 +397,14 @@ const _sfc_main = {
         const isAllVisible = entries.filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.visibleLength;
         const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex;
         const target = entries[targetIndex];
-        const xDiff = target.rootBounds.right - target.boundingClientRect.right;
-        this.translateX += xDiff;
-        this.setDomTranslateX(this.translateX);
-        const translateXAbs = Math.abs(this.translateX);
+        const diff = target.rootBounds.right - target.boundingClientRect.right;
+        this.translate += diff;
+        this.setDomDirectionTranslate(this.translate);
+        const translateAbs = Math.abs(this.translate);
         setTimeout(() => {
-          if (translateXAbs <= this.leftBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.visibleLength + 1 + this.list.length));
-            this.setDomTranslateX(this.translateX);
+          if (translateAbs <= this.leftBorder) {
+            this.translate = -(this.itemFullDirectionLengthValue * (targetIndex - this.visibleLength + 1 + this.list.length));
+            this.setDomDirectionTranslate(this.translate);
           }
         }, this.slideAnimationDuration);
       });
@@ -366,14 +415,14 @@ const _sfc_main = {
         const isAllVisible = entries.filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.visibleLength;
         const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex;
         const target = entries[targetIndex];
-        const xDiff = target.boundingClientRect.left - target.rootBounds.left;
-        this.translateX -= xDiff;
-        this.setDomTranslateX(this.translateX);
-        const translateXAbs = Math.abs(this.translateX);
+        const diff = target.boundingClientRect.left - target.rootBounds.left;
+        this.translate -= diff;
+        this.setDomDirectionTranslate(this.translate);
+        const translateXAbs = Math.abs(this.translate);
         setTimeout(() => {
           if (translateXAbs >= this.rightBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.list.length));
-            this.setDomTranslateX(this.translateX);
+            this.translate = -(this.itemFullDirectionLengthValue * (targetIndex - this.list.length));
+            this.setDomDirectionTranslate(this.translate);
           }
         }, this.slideAnimationDuration);
       });
@@ -394,33 +443,32 @@ const _sfc_main = {
           document.body.removeChild(dom);
         }
       }
-      this.translateX = this.getDomTranslateX();
+      this.translate = this.getDomDirectionTranslate();
       this.setMove(widthValue);
     },
     slidePrev() {
-      if (this.itemWidthMode !== itemWidthModeEnum.COMPUTED) {
-        throw new Error("\u4EC5 computed-item-width \u6A21\u5F0F\u652F\u6301 slidePrev");
+      if (this.direction === directionEnum.VERTICAL || this.itemSizeMode !== itemSizeModeEnum.COMPUTED) {
+        throw new Error("\u4EC5\u5F53 direction \u4E3A horizontal \u4E14 item-width-mode \u4E3A computed \u65F6\u624D\u80FD\u4F7F\u7528\u6309\u94AE\u6ED1\u52A8\u529F\u80FD");
       }
       this.handleSlide(true);
     },
     slideNext() {
-      if (this.itemWidthMode !== itemWidthModeEnum.COMPUTED) {
-        throw new Error("\u4EC5 computed-item-width \u6A21\u5F0F\u652F\u6301 slideNext");
+      if (this.direction === directionEnum.VERTICAL || this.itemSizeMode !== itemSizeModeEnum.COMPUTED) {
+        throw new Error("\u4EC5\u5F53 direction \u4E3A horizontal \u4E14 item-width-mode \u4E3A computed \u65F6\u624D\u80FD\u4F7F\u7528\u6309\u94AE\u6ED1\u52A8\u529F\u80FD");
       }
       this.handleSlide();
     },
     touchstart(evt) {
       this.playing = true;
       cancelAnimationFrame(this.animationInterval);
-      const touch = evt.targetTouches[0];
-      this.lastX = touch.pageX;
-      this.translateX = this.getDomTranslateX();
+      this.lastOffset = this.direction === directionEnum.HORIZONTAL ? evt.targetTouches[0].pageX : evt.targetTouches[0].pageY;
+      this.translate = this.getDomDirectionTranslate();
     },
     touchmove(evt) {
-      const touch = evt.targetTouches[0];
-      const xDiff = touch.pageX - this.lastX;
-      this.lastX = touch.pageX;
-      this.setMove(xDiff);
+      const touchPageValue = this.direction === directionEnum.HORIZONTAL ? evt.targetTouches[0].pageX : evt.targetTouches[0].pageY;
+      const diff = touchPageValue - this.lastOffset;
+      this.lastOffset = touchPageValue;
+      this.setMove(diff);
     },
     touchend() {
       this.playing = false;
@@ -433,19 +481,19 @@ const _sfc_main = {
     }
   },
   created() {
-    if (this.itemWidthMode === itemWidthModeEnum.COMPUTED) {
+    if (this.itemSizeMode === itemSizeModeEnum.COMPUTED) {
       if (!this.visibleLength) {
         throw new Error("visibleLength \u5FC5\u987B\u4E3A\u5927\u4E8E 0 \u7684\u6574\u6570");
       }
-      this.initItemWidth();
+      this.initItemCss();
     }
     this.initDoubleList();
   },
   mounted() {
-    this.initItemWidthValue();
-    const initialTranslateX = this.initTranslateX();
-    this.leftBorder = initialTranslateX;
-    this.rightBorder = this.itemFullWidthValue * this.list.length + initialTranslateX;
+    this.initItemRenderedValue();
+    const initialTranslate = this.initTranslate();
+    this.leftBorder = initialTranslate;
+    this.rightBorder = this.itemFullDirectionLengthValue * this.list.length + initialTranslate;
     if (this.initialOffset) {
       this.initOffset();
     }
@@ -461,7 +509,7 @@ const _sfc_main = {
       Object.assign(this.$refs.swiperWrapper.style, {
         "transition-duration": `${this.slideAnimationDuration}ms`
       });
-      this.translateX = this.getDomTranslateX();
+      this.translate = this.getDomDirectionTranslate();
       if (isPrev) {
         this._slidePrev();
       } else {
@@ -484,10 +532,11 @@ const _sfc_main = {
     cancelAnimationFrame(this.animationInterval);
   }
 };
-const _hoisted_1 = { class: "za-swiper" };
-const _hoisted_2 = ["data-index"];
+const _hoisted_1 = ["data-index"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1, [
+  return openBlock(), createElementBlock("div", {
+    class: normalizeClass($options.containerClasses)
+  }, [
     $options.useLeft ? (openBlock(), createElementBlock("div", {
       key: 0,
       class: "za-swiper__btn",
@@ -510,7 +559,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         style: normalizeStyle({
           width: $options.computedInnerWidth,
           height: $options.computedInnerHeight,
-          transform: "translateX(0px)"
+          transform: "translate(0px, 0px)"
         })
       }, [
         (openBlock(true), createElementBlock(Fragment, null, renderList($data.doubleList, (item, index) => {
@@ -518,11 +567,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
             class: "za-swiper__item",
             ref_for: true,
             ref: "swiperItems",
-            style: normalizeStyle({
-              marginRight: $options.computedSpanGap,
-              width: $data.itemWidth,
-              height: "100%"
-            }),
+            style: normalizeStyle($options.swiperItemStyle),
             "data-index": index,
             key: index
           }, [
@@ -530,7 +575,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               item,
               index
             }, void 0, true)
-          ], 12, _hoisted_2);
+          ], 12, _hoisted_1);
         }), 128))
       ], 4)
     ], 544),
@@ -542,7 +587,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     }, [
       renderSlot(_ctx.$slots, "right", {}, void 0, true)
     ], 4)) : createCommentVNode("", true)
-  ]);
+  ], 2);
 }
-var ZASwiper = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-82881cae"]]);
+var ZASwiper = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-59aca861"]]);
 export { ZASwiper as default };
