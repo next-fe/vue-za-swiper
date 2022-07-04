@@ -9,25 +9,25 @@
 ### Vu3
 安装：
 ```shell
-npm i @za/vue-za-swiper
+npm i @next-fe/vue-za-swiper
 ```
 
 使用：
 ```js
-import ZaSwiper from '@za/vue-za-swiper'
-import '@za/vue-za-swiper/dist/style.css'
+import ZaSwiper from '@next-fe/vue-za-swiper'
+import '@next-fe/vue-za-swiper/dist/style.css'
 ```
 
 ### Vu2
 安装：
 ```shell
-npm i @za/vue-za-swiper@1
+npm i @next-fe/vue-za-swiper@1
 ```
 
 使用：
 ```js
-import ZaSwiper from '@za/vue-za-swiper'
-import '@za/vue-za-swiper/dist/style.css'
+import ZaSwiper from '@next-fe/vue-za-swiper'
+import '@next-fe/vue-za-swiper/dist/style.css'
 ```
 
 ## 代码示例
@@ -66,7 +66,7 @@ import '@za/vue-za-swiper/dist/style.css'
 </template>
 
 <script>
-import '@za/vue-za-swiper/dist/style.css'
+import '@next-fe/vue-za-swiper/dist/style.css'
 import ZaSwiper from 'vue-za-swiper'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'

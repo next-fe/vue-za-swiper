@@ -19,8 +19,9 @@ npm run build
 
 cd ./packages/vue2
 # 修改版本号，接着 publish
+# 如果发布 beta 版这个参数 --tag beta
+# 如果对外发布需要加这个参数 --access public
 npm publish --tag latest-v1
-# 如果发布 beta 版就用这个命令 npm publish --tag beta
 
 cd ../vue3
 # 修改版本号，接着 publish。

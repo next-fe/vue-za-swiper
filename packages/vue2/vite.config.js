@@ -19,7 +19,7 @@ export default defineConfig({
       common: path.resolve(__dirname, '../common'),
       'lodash.throttle': path.resolve(__dirname, './node_modules/lodash.throttle'),
       // 测试用
-      // '@za/vue-za-swiper': path.resolve(__dirname, './node_modules/@za/vue-za-swiper')
+      // '@next-fe/vue-za-swiper': path.resolve(__dirname, './node_modules/@next-fe/vue-za-swiper')
     },
   },
   build: {
