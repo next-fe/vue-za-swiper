@@ -1,5 +1,5 @@
 <template>
-  <div class="za-swiper">
+  <div :class="containerClasses">
     <div class="za-swiper__btn"
          v-if="useLeft"
          @click="slidePrev"
@@ -18,16 +18,12 @@
            :style="{
              width: computedInnerWidth,
              height: computedInnerHeight,
-             transform: 'translateX(0px)'
+             transform: 'translate(0px, 0px)'
            }">
         <div
           class="za-swiper__item"
           ref="swiperItems"
-          :style="{
-             marginRight: computedSpanGap,
-             width: itemWidth,
-             height: '100%',
-          }"
+          :style="swiperItemStyle"
           v-for="(item, index) in doubleList"
           :data-index="index"
           :key="index">
@@ -51,17 +47,26 @@
 import _ from '../utils/lodash'
 import Utils from '../utils'
 
-const itemWidthModeEnum = {
+const itemSizeModeEnum = {
   COMPUTED: 'computed',
   CUSTOM: 'custom',
+}
+
+const directionEnum = {
+  VERTICAL: 'vertical',
+  HORIZONTAL: 'horizontal',
 }
 
 export default {
   name: 'za-swiper',
   props: {
-    itemWidthMode: {
+    direction: {
       type: String,
-      default: itemWidthModeEnum.COMPUTED
+      default: directionEnum.HORIZONTAL
+    },
+    itemSizeMode: {
+      type: String,
+      default: itemSizeModeEnum.COMPUTED
     },
     list: {
       type: Array,
@@ -117,9 +122,9 @@ export default {
       leftBorder: 0,
       rightBorder: 0,
       itemWidth: 'auto',
-      itemWidthValue: 0,
-      itemFullWidthValue: 0,
-      lastX: 0,
+      itemHeight: 'auto',
+      itemFullDirectionLengthValue: 0,
+      lastOffset: 0,
       intersectionRatioThreshold: 0.95,
       replayTimer: null,
       animationInterval: null,
@@ -145,6 +150,30 @@ export default {
         padding: `0 ${ this.computedSideGap }`,
       }
     },
+    containerClasses() {
+      const result = ['za-swiper']
+      if (this.direction === directionEnum.VERTICAL) {
+        result.push('za-swiper--vertical')
+      }
+
+      return result;
+    },
+    swiperItemStyle() {
+      const result = {
+        width: this.itemWidth,
+        height: this.itemHeight,
+        marginRight: 0,
+        marginBottom: 0,
+      }
+
+      if (this.direction === directionEnum.HORIZONTAL) {
+        result.marginRight = this.computedSpanGap
+      } else {
+        result.marginBottom = this.computedSpanGap
+      }
+
+      return result;
+    },
     useLeft() {
       return this.$slots.left
     },
@@ -168,45 +197,70 @@ export default {
         })
       })
     },
-    getDomTranslateX() {
-      return Number(this.$refs.swiperWrapper.style.transform.split('(')[1].split('px')[0])
+    getDomDirectionTranslate() {
+      const [ , translateX, translateY ] =  /translate\(([^p]+)px, ([^p]+)px\)/.exec(this.$refs.swiperWrapper.style.transform)
+
+      return Number(this.direction === directionEnum.HORIZONTAL ? translateX : translateY)
     },
-    setDomTranslateX(translateX) {
-      this.$refs.swiperWrapper.style.transform = `translateX(${ translateX }px)`
+    setDomDirectionTranslate(value) {
+      let translateX = 0
+      let translateY = 0
+
+      if (this.direction === directionEnum.HORIZONTAL) {
+        translateX = value
+      } else {
+        translateY = value
+      }
+
+      this.$refs.swiperWrapper.style.transform = `translate(${ translateX }px, ${ translateY }px)`;
     },
     initDoubleList() {
       const mid = Math.floor((this.list.length / 2))
       this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
       this.listDiv = this.list.length - mid
     },
-    initItemWidth() {
-      const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth)
+    initItemCss() {
+      const innerLengthCssUnit = Utils.getCssUnit(this.computedInnerWidth)
       const spanGapCssUnit = Utils.getCssUnit(this.computedSpanGap)
 
-      if (innerWidthCssUnit !== spanGapCssUnit) {
+      if (innerLengthCssUnit !== spanGapCssUnit) {
         throw new Error('Please unite spanGap、innerWidth css unit')
       }
 
-      const innerWidthValue = Utils.getCssValue(this.computedInnerWidth)
+      const computedDirectionCss = this.direction === directionEnum.HORIZONTAL ? this.computedInnerWidth : this.computedInnerHeight
+      const innerDirectionCssValue = Utils.getCssValue(computedDirectionCss)
       const spanGapValue = Utils.getCssValue(this.computedSpanGap)
+      const itemDirectionValue = (innerDirectionCssValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
 
-      const itemWidthValue = (innerWidthValue - (spanGapValue * (this.visibleLength - 1))) / this.visibleLength
-      this.itemWidth = itemWidthValue + innerWidthCssUnit
+      if (this.direction === directionEnum.HORIZONTAL) {
+        this.itemWidth = itemDirectionValue + innerLengthCssUnit
+        this.itemHeight = '100%'
+      } else {
+        this.itemWidth = '100%'
+        this.itemHeight = itemDirectionValue + innerLengthCssUnit
+      }
     },
-    initItemWidthValue() {
+    initItemRenderedValue() {
       const itemDom = this.$refs.swiperItems[0]
-      // clientWidth 算出来宽度的数会有一点偏差，用 getComputedStyle 最精确
-      this.itemWidthValue = Utils.getDomPropertyValue(itemDom, 'width');
-      this.itemFullWidthValue =  this.itemWidthValue + Utils.getDomPropertyValue(itemDom, 'margin-right')
-    },
-    initTranslateX() {
-      const translateX = this.getDomTranslateX() - this.itemFullWidthValue * this.listDiv
-      this.setDomTranslateX(translateX)
+      let lengthCssProperty = 'width'
+      let gapCssProperty = 'margin-right'
 
-      return Math.abs(translateX)
+      if (this.direction === directionEnum.VERTICAL) {
+        lengthCssProperty = 'height'
+        gapCssProperty = 'margin-bottom'
+      }
+
+      // clientWidth或clientHeight 算出来宽度的值会有一点偏差，getComputedStyle 最精确
+      this.itemFullDirectionLengthValue = Utils.getDomPropertyValue(itemDom, lengthCssProperty) + Utils.getDomPropertyValue(itemDom, gapCssProperty);
+    },
+    initTranslate() {
+      const translate = this.getDomDirectionTranslate() - this.itemFullDirectionLengthValue * this.listDiv
+      this.setDomDirectionTranslate(translate)
+
+      return Math.abs(translate)
     },
     play() {
-      this.translateX = this.getDomTranslateX()
+      this.translate = this.getDomDirectionTranslate()
 
       const animationCallback = () => {
         this.setMove(this.step)
@@ -226,17 +280,17 @@ export default {
         this.play()
       }, this.playDelay)
     },
-    setMove(xDiff) {
-      this.translateX += xDiff
-      const translateXAbs = Math.abs(this.translateX)
+    setMove(diff) {
+      this.translate += diff
+      const translateAbs = Math.abs(this.translate)
 
-      if (translateXAbs >= this.rightBorder) {
-        this.translateX = -(this.leftBorder + (translateXAbs - this.rightBorder))
-      } else if (translateXAbs <= this.leftBorder) {
-        this.translateX = -(this.rightBorder - (this.leftBorder - translateXAbs))
+      if (translateAbs >= this.rightBorder) {
+        this.translate = -(this.leftBorder + (translateAbs - this.rightBorder))
+      } else if (translateAbs <= this.leftBorder) {
+        this.translate = -(this.rightBorder - (this.leftBorder - translateAbs))
       }
 
-      this.setDomTranslateX(this.translateX)
+      this.setDomDirectionTranslate(this.translate)
     },
     _slidePrev() {
       this.getObserveEntries().then(((entries) => {
@@ -248,15 +302,15 @@ export default {
         const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
         const target = entries[targetIndex]
 
-        const xDiff = target.rootBounds.right - target.boundingClientRect.right
-        this.translateX += xDiff
-        this.setDomTranslateX(this.translateX)
+        const diff = target.rootBounds.right - target.boundingClientRect.right
+        this.translate += diff
+        this.setDomDirectionTranslate(this.translate)
 
-        const translateXAbs = Math.abs(this.translateX)
+        const translateAbs = Math.abs(this.translate)
         setTimeout(() => {
-          if (translateXAbs <= this.leftBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.visibleLength + 1 + this.list.length))
-            this.setDomTranslateX(this.translateX)
+          if (translateAbs <= this.leftBorder) {
+            this.translate = -(this.itemFullDirectionLengthValue * (targetIndex - this.visibleLength + 1 + this.list.length))
+            this.setDomDirectionTranslate(this.translate)
           }
         }, this.slideAnimationDuration)
       }))
@@ -272,15 +326,15 @@ export default {
         const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex
         const target = entries[targetIndex]
 
-        const xDiff = target.boundingClientRect.left - target.rootBounds.left
-        this.translateX -= xDiff
-        this.setDomTranslateX(this.translateX)
+        const diff = target.boundingClientRect.left - target.rootBounds.left
+        this.translate -= diff
+        this.setDomDirectionTranslate(this.translate)
 
-        const translateXAbs = Math.abs(this.translateX)
+        const translateXAbs = Math.abs(this.translate)
         setTimeout(() => {
           if (translateXAbs >= this.rightBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.list.length))
-            this.setDomTranslateX(this.translateX)
+            this.translate = -(this.itemFullDirectionLengthValue * (targetIndex - this.list.length))
+            this.setDomDirectionTranslate(this.translate)
           }
         }, this.slideAnimationDuration)
       });
@@ -298,28 +352,28 @@ export default {
         } else {
           // 将其他单位转成 px
           const dom = document.createElement('div');
-          dom.setAttribute('style', `width: ${this.initialOffset}; position: fixed; top: 9999px`)
+          dom.setAttribute('style', `width: ${ this.initialOffset }; position: fixed; top: 9999px`)
           document.body.appendChild(dom)
           widthValue = Utils.getDomPropertyValue(dom, 'width');
           document.body.removeChild(dom)
         }
       }
 
-      this.translateX = this.getDomTranslateX()
+      this.translate = this.getDomDirectionTranslate()
       this.setMove(widthValue)
     },
     /*
      * event handle
      */
     slidePrev() {
-      if (this.itemWidthMode !== itemWidthModeEnum.COMPUTED) {
-        throw new Error('仅 computed-item-width 模式支持 slidePrev')
+      if (this.direction ===  directionEnum.VERTICAL || this.itemSizeMode !== itemSizeModeEnum.COMPUTED) {
+        throw new Error('仅当 direction 为 horizontal 且 item-width-mode 为 computed 时才能使用按钮滑动功能')
       }
       this.handleSlide(true);
     },
     slideNext() {
-      if (this.itemWidthMode !== itemWidthModeEnum.COMPUTED) {
-        throw new Error('仅 computed-item-width 模式支持 slideNext')
+      if (this.direction ===  directionEnum.VERTICAL || this.itemSizeMode !== itemSizeModeEnum.COMPUTED) {
+        throw new Error('仅当 direction 为 horizontal 且 item-width-mode 为 computed 时才能使用按钮滑动功能')
       }
       this.handleSlide()
     },
@@ -332,21 +386,19 @@ export default {
 
       cancelAnimationFrame(this.animationInterval)
 
-      const touch = evt.targetTouches[0]
-
-      this.lastX = touch.pageX
-      this.translateX = this.getDomTranslateX()
+      this.lastOffset = this.direction === directionEnum.HORIZONTAL ? evt.targetTouches[0].pageX : evt.targetTouches[0].pageY
+      this.translate = this.getDomDirectionTranslate()
     },
     touchmove(evt) {
       // 修复某些安卓手机（如 OPPO）左滑时页面后退的问题
       // https://www.cnblogs.com/Miracle-ZLZ/p/7852421.html
       // evt.preventDefault() 虽然能解决问题，但是会导致在 swiper 区域上下滑动时视图不滑动。目前 touch-action 能完美解决
 
-      const touch = evt.targetTouches[0]
-      const xDiff = touch.pageX - this.lastX
+      const touchPageValue = this.direction === directionEnum.HORIZONTAL ? evt.targetTouches[0].pageX : evt.targetTouches[0].pageY
+      const diff = touchPageValue - this.lastOffset
 
-      this.lastX = touch.pageX
-      this.setMove(xDiff)
+      this.lastOffset = touchPageValue
+      this.setMove(diff)
     },
     touchend() {
       this.playing = false
@@ -361,21 +413,21 @@ export default {
     },
   },
   created() {
-    if (this.itemWidthMode === itemWidthModeEnum.COMPUTED) {
+    if (this.itemSizeMode === itemSizeModeEnum.COMPUTED) {
       if (!this.visibleLength) {
         throw new Error('visibleLength 必须为大于 0 的整数')
       }
 
-      this.initItemWidth()
+      this.initItemCss()
     }
 
     this.initDoubleList()
   },
   mounted() {
-    this.initItemWidthValue()
-    const initialTranslateX = this.initTranslateX()
-    this.leftBorder = initialTranslateX
-    this.rightBorder = this.itemFullWidthValue * this.list.length + initialTranslateX
+    this.initItemRenderedValue()
+    const initialTranslate = this.initTranslate()
+    this.leftBorder = initialTranslate
+    this.rightBorder = this.itemFullDirectionLengthValue * this.list.length + initialTranslate
 
     if (this.initialOffset) {
       this.initOffset()
@@ -398,7 +450,7 @@ export default {
         'transition-duration': `${ this.slideAnimationDuration }ms`,
       })
 
-      this.translateX = this.getDomTranslateX()
+      this.translate = this.getDomDirectionTranslate()
 
       if (isPrev) {
         this._slidePrev()
@@ -440,7 +492,6 @@ export default {
   }
 
   &__list {
-    width: 100%;
     @include flex-center(row, null, null);
   }
 
@@ -451,6 +502,13 @@ export default {
 
   &__btn {
     @include flex-center(row, null, center);
+  }
+
+  &--vertical {
+    touch-action: pan-x;
+    .za-swiper__list {
+      @include flex-center(column, null, null);
+    }
   }
 }
 </style>

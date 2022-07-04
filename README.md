@@ -143,21 +143,22 @@ export default {
 ### Props
 该组件所有属性均为非响应式属性，所以开发者需要保证数组加载完成才渲染组件，不然可能会有异常。
 
-| 参数                       | 说明                                                                                                          | 类型                  | 默认值     |
-|--------------------------|-------------------------------------------------------------------------------------------------------------|---------------------|---------|
-| item-width-mode          | `computed`：组件内部使用 `visible-length` 计算元素宽度，`custom`： 自定义元素宽度。仅使用 `computed` 模式时才能使用按钮滑动功能                    | _string_            | `computed`       |
-| list                     | 数组，必填                                                                                                       | _Array\<any>_       | -       |
-| visible-length           | 可视元素个数，当 `item-width-mode` 为 `computed` 时必填                                                                 | _number_            | -       |
-| inner-height             | 播放栏高度，默认单位为 `px`，必填                                                                                         | _number_ / _string_ | -       |
-| inner-width              | 播放栏宽度，默认单位为 `px`，必填                                                                                         | _number_ / _string_ | -       |
-| span-gap                 | 元素间距，默认单位 `px`                                                                                              | _number_ / _string_ | `0`     |
-| side-gap                 | 两边间距，默认单位 `px`                                                                                              | _number_ / _string_ | `0`     |
-| auto-play                | 是否自动播放                                                                                                      | _boolean_           | `false` |
-| step                     | 播放速度，一帧移动距离，单位 `px`                                                                                         | _number_            | `-0.5`  |
-| play-delay               | 滑动停止后再播放时间间隔，单位 `ms`                                                                                        | _number_            | `2000`  |
-| play-immediate           | 组件渲染后是否立即自动播放，`auto-play` 为 `true` 时该属性才生效                                                                  | _boolean_           | `false` |
-| slide-animation-duration | 点击左右按钮后滑动动画时长，单位 `ms`                                                                                       | _number_            | `300`   |
-| initial-offset           | 初始偏移量，支持负数，默认单位为 `px`                                                                                       | _number_ / _string_            | `0`     |
+| 参数                       | 说明                                                                                                                                                                                   | 类型                  | 默认值        |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|------------|
+| direction                | `horizontal`：横向滚动，`vertical`：纵向滚动                                                                                                                                                    | _string_            | `horizontal`         |
+| item-size-mode           | `computed`：组件内部使用 `visible-length` 计算元素宽/高（direction 为 `horizontal` 时计算宽，为 `vertical` 时计算高），`custom`： 自定义元素宽高。仅当 direction 为 `horizontal` 且 item-width-mode 为 `computed` 时才能使用按钮滑动功能 | _string_            | `computed` |
+| list                     | 数组，必填                                                                                                                                                                                | _Array\<any>_       | -          |
+| visible-length           | 可视元素个数，当 `item-size-mode` 为 `computed` 时必填                                                                                                                                          | _number_            | -          |
+| inner-height             | 播放栏高度，默认单位为 `px`，必填                                                                                                                                                                  | _number_ / _string_ | -          |
+| inner-width              | 播放栏宽度，默认单位为 `px`，必填                                                                                                                                                                  | _number_ / _string_ | -          |
+| span-gap                 | 元素间距，默认单位 `px`                                                                                                                                                                       | _number_ / _string_ | `0`        |
+| side-gap                 | 两边间距，默认单位 `px`                                                                                                                                                                       | _number_ / _string_ | `0`        |
+| auto-play                | 是否自动播放                                                                                                                                                                               | _boolean_           | `false`    |
+| step                     | 播放速度，一帧移动距离，单位 `px`                                                                                                                                                                  | _number_            | `-0.5`     |
+| play-delay               | 滑动停止后再播放时间间隔，单位 `ms`                                                                                                                                                                 | _number_            | `2000`     |
+| play-immediate           | 组件渲染后是否立即自动播放，`auto-play` 为 `true` 时该属性才生效                                                                                                                                           | _boolean_           | `false`    |
+| slide-animation-duration | 点击左右按钮后滑动动画时长，单位 `ms`                                                                                                                                                                | _number_            | `300`      |
+| initial-offset           | 初始偏移量，支持负数，默认单位为 `px`                                                                                                                                                                | _number_ / _string_ | `0`        |
 
 ### Methods
 | 名称           | 说明                         | 参数 |  返回值 |
