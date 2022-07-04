@@ -1,6 +1,6 @@
 {
   "name": "@next-fe/vue-za-swiper",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "author": "ZAFE",
   "description": "smoothly swiper",
   "keywords": [
@@ -29,7 +29,7 @@
     "lint:fix": "eslint \"**/*.{vue,js}\" --fix"
   },
   "dependencies": {
-    "lodash-es": "4.17.21"
+    "lodash.throttle": "4.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "8.3.5",

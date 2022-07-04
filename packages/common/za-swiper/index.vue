@@ -51,16 +51,28 @@
 import _ from '../utils/lodash'
 import Utils from '../utils'
 
+const itemWidthModeEnum = {
+  COMPUTED: 'computed',
+  CUSTOM: 'custom',
+}
+
 export default {
   name: 'za-swiper',
   props: {
+    itemWidthMode: {
+      type: String,
+      default: itemWidthModeEnum.COMPUTED
+    },
     list: {
       type: Array,
       required: true,
     },
+    initialOffset: {
+      type: [ Number, String ],
+      default: 0,
+    },
     visibleLength: {
       type: Number,
-      required: true,
     },
     innerHeight: {
       type: [ Number, String ],
@@ -101,10 +113,10 @@ export default {
   },
   data() {
     return {
-      halfLen: 0,
+      listDiv: 0,
       leftBorder: 0,
       rightBorder: 0,
-      itemWidth: '0',
+      itemWidth: 'auto',
       itemWidthValue: 0,
       itemFullWidthValue: 0,
       lastX: 0,
@@ -164,8 +176,8 @@ export default {
     },
     initDoubleList() {
       const mid = Math.floor((this.list.length / 2))
-      this.halfLen = mid
       this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
+      this.listDiv = this.list.length - mid
     },
     initItemWidth() {
       const innerWidthCssUnit = Utils.getCssUnit(this.computedInnerWidth)
@@ -188,7 +200,7 @@ export default {
       this.itemFullWidthValue =  this.itemWidthValue + Utils.getDomPropertyValue(itemDom, 'margin-right')
     },
     initTranslateX() {
-      const translateX = this.getDomTranslateX() - this.itemFullWidthValue * this.halfLen
+      const translateX = this.getDomTranslateX() - this.itemFullWidthValue * this.listDiv
       this.setDomTranslateX(translateX)
 
       return Math.abs(translateX)
@@ -228,11 +240,10 @@ export default {
     },
     _slidePrev() {
       this.getObserveEntries().then(((entries) => {
-        const lastVisibleIndex = entries
-          .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+        const lastVisibleIndex = entries.findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
 
         const isAllVisible = entries
-          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
+          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.visibleLength
 
         const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
         const target = entries[targetIndex]
@@ -244,7 +255,7 @@ export default {
         const translateXAbs = Math.abs(this.translateX)
         setTimeout(() => {
           if (translateXAbs <= this.leftBorder) {
-            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.halfLen + 1 + this.list.length))
+            this.translateX = -(this.itemFullWidthValue * (targetIndex - this.visibleLength + 1 + this.list.length))
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
@@ -252,12 +263,11 @@ export default {
     },
     _slideNext() {
       this.getObserveEntries().then((entries) => {
-        const firstVisibleIndex = entries
-          .findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
+        const firstVisibleIndex = entries.findIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
         // 某些浏览器在计算位置时跟预期会有一点点偏差，原来期望完全相交 1 的元素可能相交 0.99，所以将完全相交判定设置比 1 低一点点。
 
         const isAllVisible = entries
-          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
+          .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.visibleLength
 
         const targetIndex = isAllVisible ? firstVisibleIndex + 1 : firstVisibleIndex
         const target = entries[targetIndex]
@@ -273,22 +283,53 @@ export default {
             this.setDomTranslateX(this.translateX)
           }
         }, this.slideAnimationDuration)
-      })
+      });
+    },
+    initOffset() {
+      let widthValue = 0
+
+      if (_.isNumber(this.initialOffset)) {
+        widthValue = this.initialOffset
+      } else {
+        const unit = Utils.getCssUnit(this.initialOffset)
+
+        if (unit === 'px') {
+          widthValue = Utils.getCssValue(this.initialOffset)
+        } else {
+          // 将其他单位转成 px
+          const dom = document.createElement('div');
+          dom.setAttribute('style', `width: ${this.initialOffset}; position: fixed; top: 9999px`)
+          document.body.appendChild(dom)
+          widthValue = Utils.getDomPropertyValue(dom, 'width');
+          document.body.removeChild(dom)
+        }
+      }
+
+      this.translateX = this.getDomTranslateX()
+      this.setMove(widthValue)
     },
     /*
      * event handle
      */
     slidePrev() {
-      this.handleSlide(true)
+      if (this.itemWidthMode !== itemWidthModeEnum.COMPUTED) {
+        throw new Error('仅 computed-item-width 模式支持 slidePrev')
+      }
+      this.handleSlide(true);
     },
     slideNext() {
+      if (this.itemWidthMode !== itemWidthModeEnum.COMPUTED) {
+        throw new Error('仅 computed-item-width 模式支持 slideNext')
+      }
       this.handleSlide()
     },
     touchstart(evt) {
       this.playing = true
-      // 兼容某些安卓手机只触发一次 touchmove 的问题
+      // 兼容某些安卓手机（如小米）只触发一次 touchmove 的问题
+      // TODO 待测试：使用 evt.preventDefault 之后会影响 item 点击，暂时替换 evt.stopPropagation 试试
       // https://blog.csdn.net/cdnight/article/details/50625391
-      evt.preventDefault()
+      // evt.stopPropagation()
+
       cancelAnimationFrame(this.animationInterval)
 
       const touch = evt.targetTouches[0]
@@ -297,9 +338,9 @@ export default {
       this.translateX = this.getDomTranslateX()
     },
     touchmove(evt) {
-      // 修复某些安卓手机左滑时页面后退的问题
+      // 修复某些安卓手机（如 OPPO）左滑时页面后退的问题
       // https://www.cnblogs.com/Miracle-ZLZ/p/7852421.html
-      evt.preventDefault()
+      // evt.preventDefault() 虽然能解决问题，但是会导致在 swiper 区域上下滑动时视图不滑动。目前 touch-action 能完美解决
 
       const touch = evt.targetTouches[0]
       const xDiff = touch.pageX - this.lastX
@@ -320,7 +361,14 @@ export default {
     },
   },
   created() {
-    this.initItemWidth()
+    if (this.itemWidthMode === itemWidthModeEnum.COMPUTED) {
+      if (!this.visibleLength) {
+        throw new Error('visibleLength 必须为大于 0 的整数')
+      }
+
+      this.initItemWidth()
+    }
+
     this.initDoubleList()
   },
   mounted() {
@@ -328,6 +376,10 @@ export default {
     const initialTranslateX = this.initTranslateX()
     this.leftBorder = initialTranslateX
     this.rightBorder = this.itemFullWidthValue * this.list.length + initialTranslateX
+
+    if (this.initialOffset) {
+      this.initOffset()
+    }
 
     if (this.autoPlay) {
       if (this.playImmediate) {
@@ -367,6 +419,10 @@ export default {
       trailing: false,
     })
   },
+  beforeDestroy() {
+    clearTimeout(this.replayTimer)
+    cancelAnimationFrame(this.animationInterval)
+  }
 }
 </script>
 
@@ -377,6 +433,7 @@ export default {
   position: relative;
   user-select: none;
   @include flex-center(row, null, null);
+  touch-action: pan-y;
 
   &__list-wrapper {
     overflow: hidden;

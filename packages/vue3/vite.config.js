@@ -11,21 +11,21 @@ export default defineConfig({
     host: true,
     fs: {
       // Allow serving files from one level up to the project root
-      allow: [ '..' ]
-    }
+      allow: ['..'],
+    },
   },
   resolve: {
     alias: {
-      'common': path.resolve(__dirname, '../common'),
-      'lodash-es': path.resolve(__dirname, './node_modules/lodash-es'),
+      common: path.resolve(__dirname, '../common'),
+      'lodash.throttle': path.resolve(__dirname, './node_modules/lodash.throttle'),
       // 测试用
-      // '@next-fe/vue-za-swiper': path.resolve(__dirname, './node_modules/@next-fe/vue-za-swiper')
+      // '@za/vue-za-swiper': path.resolve(__dirname, './node_modules/@za/vue-za-swiper')
     },
   },
   build: {
     rollupOptions: {
       // 请确保外部化那些你的库中不需要的依赖
-      external: [ 'vue' ],
+      external: ['vue'],
       output: {
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
         globals: {

@@ -20,8 +20,9 @@ npm run build
 cd ./packages/vue2
 # 修改版本号，接着 publish
 npm publish --tag latest-v1
+# 如果发布 beta 版就用这个命令 npm publish --tag beta
 
-cd ../vu3
+cd ../vue3
 # 修改版本号，接着 publish。
 # 必须先发 Vue2 再发 Vue3，因为 README.md 在 Vue3 的目录，NPM 上显示的是最新包的 README.md
 npm publish

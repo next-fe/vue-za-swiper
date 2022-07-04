@@ -18,6 +18,7 @@
         <template #default="{ item }">
           <!-- item 父容器的宽高在 Swiper 内部已经计算好，开发者在这里的 item 样式可以使用 width: 100%、height: 100% 铺满外层 -->
           <img :src="item"
+               @click="testClick"
                class="demo-page__item"/>
         </template>
 
@@ -32,8 +33,8 @@
 
 <script>
 // 测试用
-// import ZaSwiper from '@next-fe/vue-za-swiper'
-// import '@next-fe/vue-za-swiper/dist/style.css'
+// import ZaSwiper from '@za/vue-za-swiper'
+// import '@za/vue-za-swiper/dist/style.css'
 import ZaSwiper from './za-swiper/index'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
@@ -70,6 +71,11 @@ export default {
       }, 100)
     })
   },
+  methods: {
+    testClick() {
+      console.log('testClick....')
+    }
+  }
 }
 </script>
 
@@ -83,6 +89,9 @@ export default {
     min-height: 55px;
     position: absolute;
     top: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   &__item {

@@ -16,9 +16,9 @@
 
 ```js
 initDoubleList() {
-  const mid = Math.floor((this.list.length / 2));
-  this.halfLen = mid;
+  const mid = Math.floor((this.list.length / 2))
   this.doubleList = [ ...this.list.slice(mid), ...this.list, ...this.list.slice(0, mid) ]
+  this.listDiv = this.list.length - mid
 }
 ```
 
@@ -26,7 +26,7 @@ initDoubleList() {
 
 ```js
 initTranslateX() {
-  const translateX = this.getDomTranslateX() - this.itemFullWidth * this.halfLen;
+  const translateX = this.getDomTranslateX() - this.itemFullWidth * this.listDiv;
   this.setDomTranslateX(translateX);
   return Math.abs(translateX);
 },
@@ -125,7 +125,7 @@ methods: {
         .findLastIndex((item) => item.intersectionRatio >= this.intersectionRatioThreshold)
 
       const isAllVisible = entries
-        .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.halfLen
+        .filter((item) => item.intersectionRatio >= this.intersectionRatioThreshold).length === this.visibleLength
 
       const targetIndex = isAllVisible ? lastVisibleIndex - 1 : lastVisibleIndex
       const target = entries[targetIndex]
@@ -137,7 +137,7 @@ methods: {
       const translateXAbs = Math.abs(this.translateX)
       setTimeout(() => {
         if (translateXAbs <= this.leftBorder) {
-          this.translateX = -(this.itemFullWidthValue * (targetIndex - this.halfLen + 1 + this.list.length))
+          this.translateX = -(this.itemFullWidthValue * (targetIndex - this.visibleLength + 1 + this.list.length))
           this.setDomTranslateX(this.translateX)
         }
       }, this.slideAnimationDuration)
@@ -159,11 +159,11 @@ methods: {
 下图是滑动结束后，进入了左边界的情况。这时 `targetIndex` 是 `6`，为了制造循环，我们的目标是要让索引为 `14` 的元素出现在 Swiper Container 最右边。但是 `translateX` 的定位是从 Swiper Container 最左边算起的，也就是说如果索引为 `11` 的棕色元素出现在最左边，那边最右边的元素肯定是索引为 `14` 的元素。由此可以推理出以下公式计算 `finalTranslateX`：
 
 ```js
-if (translateXOpt <= this.leftBorder) {
+if (translateXAbs <= this.leftBorder) {
   // targetIndex: 6
-  // halfLen: 4
-  // 6 + 1 - 4 + 8 = 11
-  this.translateX = -(this.itemFullWidth * (targetIndex + 1 - this.halfLen + this.list.length));
+  // visibleLength: 4
+  // 6 - 4 + 1 + 8 = 11
+  this.translateX = -(this.itemFullWidth * (targetIndex - this.visibleLength + 1 + this.list.length));
   this.setDomTranslateX(this.translateX);
 }
 ```
