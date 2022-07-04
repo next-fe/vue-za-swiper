@@ -21,12 +21,12 @@ cd ./packages/vue2
 # 修改版本号，接着 publish
 # 如果发布 beta 版这个参数 --tag beta
 # 如果对外发布需要加这个参数 --access public
-npm publish --tag latest-v1
+npm publish --tag latest-v1 --access public
 
 cd ../vue3
 # 修改版本号，接着 publish。
 # 必须先发 Vue2 再发 Vue3，因为 README.md 在 Vue3 的目录，NPM 上显示的是最新包的 README.md
-npm publish
+npm publish --access public
 ```
 
 ## 文档
