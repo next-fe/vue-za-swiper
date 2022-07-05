@@ -67,7 +67,7 @@ import '@next-fe/vue-za-swiper/dist/style.css'
 
 <script>
 import '@next-fe/vue-za-swiper/dist/style.css'
-import ZaSwiper from 'vue-za-swiper'
+import ZaSwiper from '@next-fe/vue-za-swiper'
 import IMG1 from './assets/images/model/1.png'
 import IMG2 from './assets/images/model/2.png'
 import IMG3 from './assets/images/model/3.png'
